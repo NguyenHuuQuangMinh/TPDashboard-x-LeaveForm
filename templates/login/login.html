@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Account Report | Login</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='picture/Logo.png') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="toast-overlay">
+          {% for category, message in messages %}
+            <div class="toast {{ category }}">
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+<div class="wrap">
+  <div class="panel-left">
+    <div class="brand">
+      <div class="brand-icon">
+          <img src="{{ url_for('static', filename='picture/Logo.png') }}" alt="logo">
+      </div>
+      <div>
+        <div class="brand-name">Dashboards</div>
+        <div class="brand-sub">Trails of Indochina</div>
+      </div>
+    </div>
+
+    <div class="hero-text">
+      <h2>Internal reporting dashboard</h2>
+      <p>Manage accounts, track performance and generate reports in one place.</p>
+    </div>
+
+    <div class="stats">
+      <div class="stat-item">
+        <div class="stat-dot green"></div>
+        <span class="stat-label">System status</span>
+        <span class="stat-val">Online</span>
+      </div>
+      <div class="stat-item">
+        <div class="stat-dot"></div>
+        <span class="stat-label">Active users</span>
+        <span class="stat-val">24</span>
+      </div>
+      <div class="stat-item">
+        <div class="stat-dot"></div>
+        <span class="stat-label">Reports today</span>
+        <span class="stat-val">138</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel-right">
+      <div class="form-container">
+    <div class="form-header">
+      <h1>Sign in</h1>
+      <p>Enter your credentials to access the dashboard</p>
+    </div>
+   <form method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="field">
+      <label>Username</label>
+      <input type="text" name="username" placeholder="e.g. john.doe" value="{{ session.get('username','') }}" required/>
+    </div>
+
+    <div class="field">
+      <label>Password</label>
+      <div class="input-with-icon">
+        <input id="password" type="password" name="password" placeholder="••••••••" required/>
+        <span class="input-icon" onclick="togglePassword(this)">
+            <i class="fa-solid fa-eye"></i>
+        </span>
+      </div>
+    </div>
+
+    <div class="row-opts">
+      <label class="check-label">
+        <input type="checkbox" name="remember" {% if session.get('remember') %}checked{% endif %}/> Remember me
+      </label>
+      <a href="#" class="forgot">Forgot password?</a>
+    </div>
+
+    <button class="btn-sign">Sign in →</button>
+    </form>
+
+    <div class="footer">© 2026 Trails of Indochina · Internal use only</div>
+      </div>
+  </div>
+</div>
+
+</body>
+<script src="{{ url_for('static', filename='js/login.js') }}"></script>
+</html>

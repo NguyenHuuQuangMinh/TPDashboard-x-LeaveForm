@@ -1,0 +1,24 @@
+<header class="header">
+    <div class="header-left">
+        {% if session.get('role') == 1 %}
+            <span class="logo">📊 Quản lý Dashboard</span>
+        {%else%}
+            <span class="logo">📊 Dashboard</span>
+        {%endif%}
+    </div>
+
+    <div class="header-right">
+        <div class="user-info">
+            Xin chào,
+            <strong>{{ session.get('username', 'User') }}</strong>
+        </div>
+
+        <nav class="nav">
+            {% if session.get('role') == 1 %}
+                <a href="javascript:void(0)" onclick="window.location='{{ url_for('admin.dashboard') }}'">Dashboard</a>
+            {% endif %}
+
+            <a href="javascript:void(0)" onclick="window.location='{{ url_for('auth.logout') }}'" class="logout">Đăng xuất</a>
+        </nav>
+    </div>
+</header>
