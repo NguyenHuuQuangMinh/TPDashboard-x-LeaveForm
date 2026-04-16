@@ -1,0 +1,35 @@
+<header class="header">
+
+    <!-- LEFT: MENU BUTTON -->
+    <div class="header-left">
+        <button class="menu-toggle" onclick="toggleSidebar()">
+            ☰
+        </button>
+    </div>
+
+    <!-- RIGHT: USER INFO -->
+    <div class="header-right">
+
+        <div class="user-box" onclick="toggleUserMenu()">
+
+            <img class="avatar"
+                 src="{{ url_for('static', filename='picture/Logo.png') }}"
+                 alt="avatar">
+
+            <div class="user-info">
+                <div class="username">
+                    Hi, {{ session.get('username', 'User') }}
+                </div>
+
+                <div class="job-title">
+                    {{ session.get('job', 'Employee') }}
+                </div>
+            </div>
+            {% include "partials/Dropdown/drop_down.html" %}
+
+        </div>
+
+
+    </div>
+
+</header>

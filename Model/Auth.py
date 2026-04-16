@@ -10,6 +10,7 @@ class AuthModel:
                             u."RoleId"   AS role_id,
                             u."Online"   AS online,
                             u."Status"   AS status,
+                            u."Job_title" AS job_title,
                             r."Status"   AS role_status
                      FROM "Users" u
                               JOIN "Roles" r ON u."RoleId" = r."RoleId"
