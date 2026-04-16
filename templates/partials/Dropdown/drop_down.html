@@ -1,3 +1,10 @@
 <div class="user-dropdown" id="userDropdown">
-    <a href="{{ url_for('auth.logout') }}">Đăng xuất</a>
+    {% if session['role'] == 1%}
+        {% if session['is_admin'] == 1%}
+            <a href="{{ url_for('user.home') }}">Go to User</a>
+        {% else %}
+            <a href="{{ url_for('admin.dashboard') }}">Go to admin</a>
+        {% endif %}
+    {% endif%}
+    <a href="{{ url_for('auth.logout') }}">Log out</a>
 </div>

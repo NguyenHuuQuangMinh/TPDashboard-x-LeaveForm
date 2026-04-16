@@ -10,4 +10,7 @@ def before_all():
 
 @user_bp.route('/home',methods=['GET', 'POST'])
 def home():
+    if session.get('is_admin') == 1:
+        session['is_admin'] = 0
+
     return render_template("user/home.html")

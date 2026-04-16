@@ -44,6 +44,8 @@ def login():
             session['username'] = user.username
             session['role'] = user.role_id
             session['job'] = user.job_title
+            if(user.role_id == 1):
+                session['is_admin'] = 1
             if remember:
                 session.permanent = True
             else:
