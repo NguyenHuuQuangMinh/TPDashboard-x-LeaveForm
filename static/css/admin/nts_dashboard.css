@@ -345,3 +345,21 @@
   vertical-align: top;
 }
 .contact-table tr:hover td { background: #1a1a2e; }
+/* ── REPORT BUTTON ── */
+.btn-report {
+  padding: 8px 18px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  background: #1a6e3c;
+  color: #fff;
+  align-self: flex-end;
+  transition: background 0.2s;
+}
+.btn-report:hover { background: #145c32; }

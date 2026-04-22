@@ -34,6 +34,13 @@
     </div>
     <button type="submit" class="btn-search"><i class="bi bi-search"></i> Search</button>
     <a href="{{ url_for('admin.nts_dashboard') }}" class="btn-reset"><i class="bi bi-x-circle"></i> Reset</a>
+
+    <a href="https://webconnect.trailsofindochina.com/ReportServer/Pages/ReportViewer.aspx?%2fSales+Team%2fRETAIL+TEAM%2f01.+Revenue+by+Agent_RT+ONLY&rs:Command=Render"
+   target="_blank"
+   class="btn-report">
+  <i class="bi bi-bar-chart-line"></i> Revenue Report
+</a>
+
     <div class="records-badge">
       Records<br><span>{{ "{:,}".format(total) }}</span>
     </div>
