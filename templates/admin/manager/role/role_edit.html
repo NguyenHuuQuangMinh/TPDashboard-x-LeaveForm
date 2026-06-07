@@ -1,0 +1,73 @@
+<div class="route-actions">
+<form id="roleForm" method="POST" action="{{ url_for('role.update_role', role_id=role.RoleId) }}">
+
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    <input type="hidden" name="id" value="{{ role.RoleId }}">
+
+    <div class="form-grid">
+
+        <div class="form-group">
+
+            <label>Name</label>
+
+            <input type="text" name="name" value="{{ role.Rolename }}" required>
+
+        </div>
+
+        <div class="form-group">
+
+            <label>Status</label>
+
+            <select name="status">
+
+                <option value="1" {% if role.Status %} selected {% endif %}>
+                    Active
+                </option>
+
+                <option
+                    value="0" {% if not role.Status %} selected {% endif %}>
+                    Inactive
+                </option>
+
+            </select>
+
+        </div>
+
+    </div>
+</form>
+<form
+    id="deleteForm_role"
+    method="POST"
+    action="{{ url_for('role.delete_role', role_id=role.RoleId) }}"
+    onsubmit="return confirm('Delete this role?')"
+>
+
+    <input
+        type="hidden"
+        name="csrf_token"
+        value="{{ csrf_token() }}"
+    >
+
+</form>
+<div class="crud-actions">
+
+        <button
+            class="btn-save"
+            type="submit"
+            form="roleForm"
+        >
+            Save
+        </button>
+
+        <button
+            class="btn-delete"
+            type="submit"
+            form="deleteForm_role"
+        >
+            Delete
+        </button>
+
+    </div>
+
+</div>

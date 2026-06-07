@@ -1,5 +1,6 @@
 from flask import Blueprint,session,redirect,url_for,request, render_template,flash
 from Model.Auth import AuthModel
+from Model.Utils.password_helper import verify_password
 auth_bp = Blueprint('auth', __name__)
 @auth_bp.route('/')
 def index():
@@ -25,18 +26,33 @@ def login():
         username = request.form['username']
         password = request.form['password']
         remember = request.form.get('remember')
-        user = AuthModel.authenticate(username, password)
+        user = AuthModel.authenticate(username)
         if not username or not password:
-            flash("❌ Vui lòng nhập đầy đủ tài khoản và mật khẩu", "error")
+            flash(
+                "❌ Please enter both username and password.",
+                "error"
+            )
             return redirect(url_for('auth.login'))
+
         if user and int(user.status) == 0:
-            flash("🚫 Tài khoản của bạn đã bị khóa!", 'error')
+            flash(
+                "🚫 Your account has been locked.",
+                "error"
+            )
             return redirect(url_for('auth.login'))
+
         if user and int(user.role_status) == 0:
-            flash("🚫 Quyền hạn của bạn đã bị khóa!", 'error')
+            flash(
+                "🚫 Your permissions have been disabled.",
+                "error"
+            )
             return redirect(url_for('auth.login'))
-        if not user:
-            flash('❌ Sai tên đăng nhập hoặc mật khẩu', 'error')
+
+        if not verify_password(password, user.password_hash):
+            flash(
+                "❌ Invalid username or password.",
+                "error"
+            )
             return redirect(url_for('auth.login'))
         else:
             session.clear()
@@ -44,6 +60,7 @@ def login():
             session['username'] = user.username
             session['role'] = user.role_id
             session['job'] = user.job_title
+            session['department'] = user.department_id
             if(user.role_id == 1):
                 session['is_admin'] = 1
             if remember:
@@ -51,7 +68,10 @@ def login():
             else:
                 session.permanent = False
             # UserModel.update_online(user.id, True)
-            flash(f'✅ Đăng nhập thành công, mừng quay trở lại {user.username}', 'success')
+            flash(
+                f'🎉 Welcome back, {user.username}! You have logged in successfully.',
+                'success'
+            )
             if user.role_id == 1:
                 return redirect(url_for('admin.dashboard'))
             else:

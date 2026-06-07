@@ -1,0 +1,795 @@
+/* ═══════════════════════════════════════════════════
+   leave_detail.css
+   Place at: static/css/admin/leave_detail.css
+═══════════════════════════════════════════════════ */
+
+/* ── Page wrapper ── */
+.ilr-wrap {
+  max-width: 1200px;
+  margin: 28px auto;
+  padding: 0 16px 60px;
+  font-family: 'Georgia', serif;
+}
+
+/* ── Top action bar ── */
+.ilr-topbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.ilr-topbar .btn-back {
+  margin-right: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  color: #333;
+  font-size: 13px;
+  text-decoration: none;
+  font-family: 'Arial', sans-serif;
+  transition: background .15s;
+}
+.ilr-topbar .btn-back:hover { background: #f5f5f5; }
+
+.ilr-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-family: 'Arial', sans-serif;
+  cursor: pointer;
+  border: 1px solid transparent;
+  text-decoration: none;
+  transition: opacity .15s;
+}
+.ilr-btn:hover { opacity: .85; }
+.btn-print {
+  background: #fff;
+  border-color: #2c2218;
+  color: #2c2218;
+}
+
+/* ── Card shell ── */
+.ilr-card {
+  background: #fff;
+  border: 1px solid #ccc5b8;
+  border-radius: 3px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0,0,0,.07);
+}
+
+/* ── Dark header ── */
+.ilr-card-head {
+  background: #2c2218;
+  color: #fff;
+  padding: 24px 32px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+.ilr-card-head .head-left h1 {
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  margin: 0 0 5px;
+  text-transform: uppercase;
+}
+.ilr-card-head .head-left p {
+  margin: 0;
+  font-size: 11px;
+  letter-spacing: .14em;
+  color: #c9a96e;
+  text-transform: uppercase;
+  font-family: 'Arial', sans-serif;
+}
+.ilr-card-head .head-right {
+  font-family: 'Arial', sans-serif;
+  font-size: 12px;
+  color: #c9a96e;
+  letter-spacing: .06em;
+  white-space: nowrap;
+  padding-top: 6px;
+}
+.ilr-card-head .logo-img {
+  height: 34px;
+  margin-bottom: 12px;
+  display: block;
+}
+
+/* ── Info grid ── */
+.ilr-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-bottom: 1px solid #ddd7ce;
+}
+.ilr-info-col { padding: 22px 32px; }
+.ilr-info-col:first-child { border-right: 1px solid #ddd7ce; }
+
+.ilr-field {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.ilr-field:last-of-type { margin-bottom: 0; }
+.ilr-field label {
+  font-family: 'Arial', sans-serif;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #444;
+  min-width: 120px;
+  flex-shrink: 0;
+}
+.ilr-field .fval {
+  font-size: 14px;
+  color: #1a1a1a;
+  border-bottom: 1px solid #bbb;
+  flex: 1;
+  padding-bottom: 3px;
+}
+.ilr-note {
+  font-family: 'Arial', sans-serif;
+  font-size: 11px;
+  color: #999;
+  margin: 14px 0 0;
+  font-style: italic;
+}
+
+/* ── Balance cards ── */
+.ilr-balance {
+  padding: 20px 32px 22px;
+  border-bottom: 1px solid #ddd7ce;
+}
+.ilr-balance h3 {
+  font-family: 'Arial', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  color: #666;
+  text-transform: uppercase;
+  margin: 0 0 14px;
+}
+.balance-cards { display: flex; gap: 12px; }
+.balance-card {
+  flex: 1;
+  border: 1px solid #ccc5b8;
+  border-radius: 3px;
+  padding: 14px 20px 16px;
+  background: #faf8f5;
+}
+.balance-card .bc-label {
+  font-family: 'Arial', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  color: #999;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.balance-card .bc-val {
+  font-size: 30px;
+  font-weight: 700;
+  color: #2c2218;
+  font-family: 'Georgia', serif;
+  line-height: 1;
+}
+.balance-card.card-used .bc-val { color: #c0392b; }
+.balance-card.card-ok   .bc-val { color: #2c7a4b; }
+
+/* ── Leave table ── */
+.ilr-table-wrap { overflow-x: auto; }
+.ilr-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Arial', sans-serif;
+  font-size: 13px;
+}
+
+/* thead */
+.ilr-table thead tr { background: #2c2218; color: #fff; }
+.ilr-table thead th {
+  padding: 12px 10px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .02em;
+  border-right: 1px solid #3d3128;
+  white-space: nowrap;
+}
+.ilr-table thead th:last-child { border-right: none; }
+.th-no       { width: 44px; }
+.th-date     { text-align: left !important; min-width: 230px; }
+.th-type     { min-width: 200px; }
+.th-days     { width: 64px; }
+.th-notes    { min-width: 140px; }
+.th-sign     { min-width: 150px; }
+.th-approval { min-width: 150px; }
+.th-action   { width: 90px; }
+
+/* tbody */
+.ilr-table tbody tr { border-bottom: 1px solid #e8e2d9; }
+.ilr-table tbody tr:nth-child(even) { background: #fff; }
+.ilr-table tbody tr:hover { background: #fff; }
+.ilr-table tbody tr.row-approved { background: #fff; }
+.ilr-table tbody tr.row-rejected { background: #fff; }
+
+.ilr-table tbody td {
+  padding: 8px 10px;
+  vertical-align: middle;
+  border-right: 1px solid #e8e2d9;
+  text-align: center;
+  color: #2a2a2a;
+}
+.ilr-table tbody td:last-child { border-right: none; }
+.td-no   { color: #aaa; font-size: 12px; }
+.td-date { text-align: left; }
+.td-type { text-align: left; }
+
+/* ── Editable inputs ── */
+.inp-date {
+  border: none;
+  border-bottom: 1px solid #ccc;
+  background: transparent;
+  font-family: 'Arial', sans-serif;
+  font-size: 12px;
+  color: #2a2a2a;
+  padding: 3px 2px;
+  width: 106px;
+  outline: none;
+  cursor: pointer;
+}
+.inp-date:focus { border-bottom-color: #c9a96e; }
+
+.date-range {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.date-sep {
+  color: #aaa;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.inp-select {
+  border: 1px solid #d9d0c4;
+  border-radius: 3px;
+  background: #fff;
+  font-family: 'Arial', sans-serif;
+  font-size: 12px;
+  color: #2a2a2a;
+  padding: 5px 8px;
+  width: 100%;
+  outline: none;
+  cursor: pointer;
+  appearance: auto;
+}
+.inp-select:focus { border-color: #c9a96e; }
+
+.leave-type-sel { min-width: 180px; }
+.approval-sel   { min-width: 130px; }
+
+.inp-days {
+  border: 1px solid #d9d0c4;
+  border-radius: 3px;
+  background: #fff;
+  font-family: 'Georgia', serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: #2c2218;
+  padding: 4px 6px;
+  width: 56px;
+  text-align: center;
+  outline: none;
+}
+.inp-days:focus { border-color: #c9a96e; }
+
+.inp-notes {
+  border: none;
+  border-bottom: 1px solid #ccc;
+  background: transparent;
+  font-family: 'Arial', sans-serif;
+  font-size: 12px;
+  color: #555;
+  padding: 3px 2px;
+  width: 100%;
+  outline: none;
+}
+.inp-notes:focus { border-bottom-color: #c9a96e; }
+.inp-notes::placeholder { color: #ccc; }
+
+/* ── Signature cell ── */
+.td-sign, .td-approval { text-align: center; }
+
+.btn-sign {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 16px;
+  border: 1px dashed #c9a96e;
+  border-radius: 3px;
+  background: transparent;
+  color: #c9a96e;
+  font-size: 12px;
+  font-family: 'Arial', sans-serif;
+  font-style: italic;
+  cursor: pointer;
+  transition: background .15s;
+}
+.btn-sign:hover { background: #fdf8ef; }
+
+.signed-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.sig-img {
+  height: 36px;
+  max-width: 120px;
+  object-fit: contain;
+  border-bottom: 1px solid #ccc;
+}
+.btn-clear-sig {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  border: 1px solid #ddd;
+  background: #f5f5f5;
+  color: #999;
+  font-size: 11px;
+  cursor: pointer;
+  padding: 0;
+}
+.btn-clear-sig:hover { background: #fde2e2; color: #c0392b; border-color: #f8baba; }
+
+/* status badge */
+.status-badge {
+  display: inline-block;
+  padding: 3px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: capitalize;
+}
+.status-pending  { background: #fff3cd; color: #856404; }
+.status-approved { background: #d1f2e1; color: #155724; }
+.status-rejected { background: #fde2e2; color: #9b1c1c; }
+
+/* empty row */
+.empty-row {
+  text-align: center !important;
+  color: #bbb;
+  padding: 36px !important;
+  font-style: italic;
+}
+
+/* tfoot */
+.ilr-table tfoot tr { background: #f0ebe2; }
+.ilr-table tfoot td {
+  padding: 10px 14px;
+  border-right: 1px solid #ddd6cc;
+  border-top: 2px solid #ccc5b8;
+  text-align: center;
+  font-weight: 600;
+  font-size: 13px;
+  color: #2c2218;
+}
+.ilr-table tfoot td:last-child { border-right: none; }
+.tfoot-label { text-align: right !important; }
+.bal-negative { color: #c0392b !important; font-weight: 700; }
+.bal-positive { color: #2c7a4b !important; font-weight: 700; }
+
+/* ── Action buttons ── */
+.action-cell { display: flex; gap: 5px; justify-content: center; }
+.btn-save-row, .btn-del {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px; height: 28px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background .12s;
+}
+.btn-save-row { background: #e8f4fd; color: #1a6fa8; }
+.btn-del      { background: #efefef; color: #555; }
+.btn-save-row:hover { background: #cce3f5; }
+.btn-del:hover      { background: #fde2e2; color: #c0392b; }
+
+/* ═══════════════════════════════════════
+   SIGNATURE MODAL
+═══════════════════════════════════════ */
+.sig-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.45);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.sig-modal-box {
+  background: #fff;
+  border-radius: 6px;
+  width: 540px;
+  box-shadow: 0 8px 40px rgba(0,0,0,.2);
+  overflow: hidden;
+}
+.sig-modal-head {
+  background: #2c2218;
+  color: #fff;
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: 'Arial', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+}
+.sig-modal-close {
+  background: none;
+  border: none;
+  color: #c9a96e;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 0;
+  line-height: 1;
+}
+.sig-modal-close:hover { color: #fff; }
+.sig-modal-body {
+  padding: 16px 20px;
+  background: #faf8f5;
+  display: flex;
+  justify-content: center;
+}
+#sig-canvas {
+  border: 1px dashed #c9a96e;
+  border-radius: 4px;
+  background: #fff;
+  cursor: crosshair;
+  touch-action: none;
+}
+.sig-modal-foot {
+  padding: 12px 20px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  border-top: 1px solid #eee;
+}
+.btn-clear-canvas {
+  background: #f5f5f5;
+  border-color: #ccc;
+  color: #555;
+}
+.btn-save-sig {
+  background: #2c2218;
+  border-color: #2c2218;
+  color: #fff;
+}
+.btn-save-sig:hover { opacity: .85; }
+
+/* ── Add row toolbar ── */
+.ilr-table-toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 14px 18px;
+  border-top: 1px solid #e0dcd4;
+  background: #faf8f5;
+}
+.btn-add-row {
+  background: #f4ede4 !important;
+  border: 1px dashed #8a7a66 !important;
+  color: #2c2218 !important;
+}
+.btn-add-row:hover:not(:disabled) {
+  background: #ebe3d8 !important;
+}
+.ilr-add-hint {
+  font-size: 12px;
+  color: #6a5f52;
+  font-family: 'Arial', sans-serif;
+}
+
+/* ── Print ── */
+@media print {
+  .ilr-topbar,
+  .no-print { display: none !important; }
+  .ilr-wrap { margin: 0; padding: 0; }
+  .ilr-card { box-shadow: none; border: none; }
+
+  .inp-date, .inp-notes {
+    border: none;
+    border-bottom: 1px solid #ccc;
+  }
+  .inp-select, .inp-days {
+    border: none;
+    appearance: none;
+  }
+  .btn-sign {
+    border: 1px dashed #ccc;
+  }
+}
+
+.leave-row.selected-row {
+  background: #fff3cd !important;
+  outline: 2px solid #f0b90b;
+}
+
+@media screen and (max-width:640px){
+
+  .ilr-info{
+      display:block;
+  }
+
+  .ilr-info-col{
+      width:100%;
+      padding:16px;
+  }
+
+  .ilr-info-col:first-child{
+      border-right:none;
+      border-bottom:1px solid #ddd7ce;
+  }
+
+  .ilr-field{
+      flex-direction:column;
+      align-items:flex-start;
+      gap:4px;
+  }
+
+  .ilr-field label{
+      min-width:auto;
+  }
+
+  .ilr-field .fval{
+      width:100%;
+      word-break:break-word;
+  }
+
+  .balance-cards{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:8px;
+  }
+
+  .balance-card{
+      min-width:0;
+  }
+
+  .bc-val{
+      font-size:22px;
+  }
+
+  .ilr-card-head{
+      flex-direction:column;
+      align-items:flex-start;
+      padding:16px;
+  }
+
+  .ilr-card-head .head-left h1{
+      font-size:18px;
+  }
+
+}
+
+/* ==========================
+   MOBILE ONLY
+========================== */
+@media (max-width: 768px) {
+
+  /* Thu hẹp cột Date */
+  .th-date {
+    min-width: 120px !important;
+  }
+
+  .inp-date {
+    width: 70px !important;
+    font-size: 11px;
+  }
+
+  .date-range {
+    gap: 2px;
+  }
+
+  .date-sep {
+    font-size: 10px;
+  }
+
+  /* Thu hẹp cột Leave Type */
+  .th-type {
+    min-width: 120px !important;
+  }
+
+  .leave-type-sel {
+    min-width: 110px !important;
+    font-size: 11px;
+  }
+
+  /* Thu hẹp cột Notes */
+  .th-notes {
+    min-width: 90px !important;
+  }
+
+  .inp-notes {
+    width: 90px;
+    font-size: 11px;
+  }
+
+  /* Giảm padding toàn bảng */
+  .ilr-table th,
+  .ilr-table td {
+    padding: 4px !important;
+    font-size: 11px;
+  }
+}
+
+
+ .td-approval-status { text-align: center; }
+  .ilr-table thead th.th-approval-status { min-width: 140px; }
+  .inp-date[readonly], .inp-notes[readonly] {
+    border-bottom-color: transparent;
+    cursor: default;
+    color: #444;
+  }
+  .selected-row {
+    background-color: #fcf8f2 !important;
+    outline: 2px solid #2c2218;
+  }
+
+  /* ── Signature placeholder (ẩn trên web, hiện khi print) ── */
+  .sign-print-box { display: none; }
+
+  /* ══════════════════════════════════════
+     PRINT STYLES
+  ══════════════════════════════════════ */
+  @media print {
+    @page {
+      size: A4 landscape;
+      margin: 10mm 12mm;
+      /* Ẩn header/footer mặc định của browser (URL, tên trang, số trang) */
+      margin-top: 10mm;
+    }
+
+    /* Ẩn mọi thứ không cần in */
+    .no-print,
+    .ilr-topbar,
+
+    .ilr-table-toolbar,
+    .btn-back,
+    .btn-sign,
+    .sig-modal-overlay,
+    .th-approval-status,
+    .td-approval-status,
+    /* Ẩn navbar/header của base.html */
+    nav, header, .navbar, .sidebar, .topbar,
+    .nav-bar, .top-bar, .app-header,
+    [class*="navbar"], [class*="sidebar"],
+    [class*="header"]:not(.ilr-card-head) { display: none !important; }
+
+    /* Ẩn browser default header/footer (URL, date, page title) */
+    @page {
+      margin-header: 0 !important;
+      margin-footer: 0 !important;
+    }
+
+    body {
+      background: #fff !important;
+      padding: 0 !important;
+      /* Ẩn header/footer browser */
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+    .ilr-wrap { padding: 0 !important; }
+    .ilr-card { border: none !important; box-shadow: none !important; }
+
+    /* ── Input đã được swap sang div bởi JS beforeprint ── */
+    .inp-notes, .inp-date, .inp-days { display: none !important; }
+    .inp-select { display: none !important; }
+
+    /* ── Div thay thế input ── */
+    .notes-print-div {
+      font-size: 10px !important;
+      word-break: break-word !important;
+      white-space: normal !important;
+      border-bottom: 1px solid #ccc !important;
+      min-height: 18px !important;
+      padding: 2px 0 !important;
+      width: 100% !important;
+      color: #111 !important;
+      display: block !important;
+    }
+    .date-print-div {
+      font-size: 10px !important;
+      border-bottom: 1px solid #ccc !important;
+      display: inline-block !important;
+      min-width: 80px !important;
+      color: #111 !important;
+    }
+    .days-print-div {
+      font-size: 11px !important;
+      border-bottom: 1px solid #ccc !important;
+      text-align: center !important;
+      min-width: 32px !important;
+      display: inline-block !important;
+      color: #111 !important;
+    }
+    .fval { font-size: 10px !important; display: inline !important; }
+
+    /* ── Notes column ── */
+    .td-notes {
+      min-width: 160px !important;
+      max-width: 220px !important;
+      white-space: normal !important;
+      word-break: break-word !important;
+    }
+
+    /* ── Chữ ký ── */
+    .sign-print-box {
+      display: block !important;
+      width: 110px;
+      height: 38px;
+      border-bottom: 1.5px solid #555;
+      margin: 0 auto;
+    }
+    .sig-img {
+      max-width: 100px !important;
+      max-height: 36px !important;
+      display: block !important;
+      margin: 0 auto !important;
+    }
+    .td-sign { min-width: 110px !important; text-align: center !important; }
+
+    /* ── Table ── */
+    .ilr-table { font-size: 10px !important; }
+    .ilr-table th, .ilr-table td { padding: 6px 8px !important; }
+    .leave-row { page-break-inside: avoid !important; }
+    tfoot { page-break-inside: avoid !important; }
+  }
+
+  .td-notes {
+  width: 260px;
+  min-width: 260px;
+}
+
+.inp-notes {
+  width: 100%;
+  min-height: 38px;
+
+  resize: none;
+  overflow-y: hidden;
+
+  padding: 8px 10px;
+
+  border: 1px solid #d7cec2;
+  border-radius: 6px;
+
+  font-size: 13px;
+  line-height: 1.5;
+
+  background: #fff;
+  color: #222;
+
+  font-family: inherit;
+
+  white-space: pre-wrap;
+  word-break: break-word;
+
+  box-sizing: border-box;
+}
+  .inp-notes {
+  transition: height 0.08s ease;
+}

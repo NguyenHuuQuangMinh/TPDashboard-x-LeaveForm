@@ -1,0 +1,287 @@
+{% extends "user/layout/base.html" %}
+
+{% block title %}My Leave Record{% endblock %}
+
+{% block content %}
+
+{% set total_avail = (meta.carry_over or 0)|float + (meta.entitle_contract or 0)|float %}
+{% set al_used     = entries|sum(attribute='annual_leave') %}
+{% set remaining   = total_avail - al_used %}
+
+<div class="ilr-wrap">
+
+  {# ── Top action bar ── #}
+  <div class="ilr-topbar">
+    <a href="{{ url_for('leave.manager_leave_overview') }}" class="btn-back">
+      <i class="bi bi-arrow-left"></i> Back
+    </a>
+
+    <a href="{{ url_for('leave.manager_leave_overview') }}"
+       style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;
+              border:1px solid #ddd;border-radius:8px;font-size:13px;
+              color:#555;text-decoration:none;background:#fafafa;">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+      Overview Dashboard
+    </a>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <button class="ilr-btn btn-excel no-print" onclick="downloadExcel()"
+              style="background:#1d6f42;color:#fff;border:1px solid #1d6f42;display:flex;align-items:center;gap:6px;">
+        <i class="bi bi-file-earmark-excel"></i> Download Excel
+      </button>
+      <button class="ilr-btn btn-pdf no-print" onclick="downloadPDF()"
+              style="background:#b42318;color:#fff;border:1px solid #b42318;display:flex;align-items:center;gap:6px;">
+        <i class="bi bi-file-earmark-pdf"></i> Download PDF
+      </button>
+      <button class="ilr-btn btn-print" onclick="beforePrint(); window.print();">
+        <i class="bi bi-printer"></i> Print / PDF
+      </button>
+    </div>
+  </div>
+  <div id="leave-data"
+         data-total-avail="{{ total_avail }}"
+         data-carry-over="{{ meta.carry_over or 0 }}"
+         data-entitle-contract="{{ meta.entitle_contract or 0 }}">
+    </div>
+  <div class="ilr-card">
+
+    {# ── Dark header ── #}
+    <div class="ilr-card-head">
+      <div class="head-left">
+        <img src="{{ url_for('static', filename='picture/Logo.png') }}" class="logo-img" alt="Logo">
+        <h1>Individual Leave Record</h1>
+        <p>Human Resources — Annual Tracking Form</p>
+      </div>
+      <div class="head-right">TOI-AHR-LR-F01/NOV15</div>
+    </div>
+
+    {# ── Info grid ── #}
+    <div class="ilr-info">
+      <div class="ilr-info-col">
+        <div class="ilr-field"><label>Full Name</label><span class="fval">{{ meta.full_name or '—' }}</span></div>
+        <div class="ilr-field"><label>Job Title</label><span class="fval">{{ meta.job_title or '—' }}</span></div>
+        <div class="ilr-field"><label>Working Location</label><span class="fval">{{ meta.working_location or '—' }}</span></div>
+        <div class="ilr-field"><label>Joining Date</label><span class="fval">{{ meta.joining_date or '—' }}</span></div>
+      </div>
+      <div class="ilr-info-col">
+        <div class="ilr-field"><label>Year</label><span class="fval">2026</span></div>
+        <div class="ilr-field"><label>Department</label><span class="fval">{{ meta.department or '—' }}</span></div>
+        <div class="ilr-field"><label>Reports To</label><span class="fval">{{ meta.report_to or '—' }}</span></div>
+        <p class="ilr-note">* Max carry over: 3 days — cleared before 1st May</p>
+      </div>
+    </div>
+     <div id="employee-meta"
+         data-full-name="{{ meta.full_name or '' }}"
+         data-job-title="{{ meta.job_title or '' }}"
+         data-department="{{ meta.department or '' }}"
+         data-working-location="{{ meta.working_location or '' }}"
+         data-report-to="{{ meta.report_to or '' }}"
+         data-joining-date="{{ meta.joining_date or '' }}">
+    </div>
+    {# ── Balance cards ── #}
+    <div class="ilr-balance">
+      <h3>Annual Leave Balance</h3>
+      <div class="balance-cards">
+        <div class="balance-card"><div class="bc-label">2025 Carry Over</div><div class="bc-val">{{ meta.carry_over or 0 }}</div></div>
+        <div class="balance-card"><div class="bc-label">Contracted Entitlement</div><div class="bc-val">{{ meta.entitle_contract or 0 }}</div></div>
+        <div class="balance-card"><div class="bc-label">Total Available</div><div class="bc-val">{{ total_avail }}</div></div>
+        <div class="balance-card card-used"><div class="bc-label">AL Used</div><div class="bc-val" id="al-used-val">{{ al_used }}</div></div>
+        <div class="balance-card card-ok"><div class="bc-label">Remaining</div><div class="bc-val" id="remaining-val">{{ remaining }}</div></div>
+      </div>
+    </div>
+
+    {# ── Leave table ── #}
+    <div class="ilr-table-wrap">
+      <input type="hidden" id="csrf-token" value="{{ csrf_token() }}">
+      <table class="ilr-table" id="leave-table">
+        <thead>
+          <tr>
+            <th class="th-no">No.</th>
+            <th class="th-date">Date (From – To)</th>
+            <th class="th-type">Leave Type</th>
+            <th class="th-days">Days</th>
+            <th class="th-notes">Notes</th>
+            <th class="th-sign">Applicant Signature</th>
+            <th class="th-approval-status">Approval Status</th>
+          </tr>
+        </thead>
+        <tbody id="leave-tbody">
+          {% for e in entries %}
+          <tr class="leave-row {% if e.status == 'approved' %}row-approved{% elif e.status == 'rejected' %}row-rejected{% endif %}"
+              data-id="{{ e.id }}" data-saved="true">
+
+            <td class="td-no">{{ loop.index }}</td>
+
+            <td class="td-date">
+              <div class="date-range">
+                <input type="date" value="{{ e.date_from.strftime('%Y-%m-%d') if e.date_from else '' }}"
+                       class="inp-date" id="date-from-{{ e.id }}"
+                       {% if e.status == 'approved' %}readonly{% endif %}>
+                <span class="date-sep">–</span>
+                <input type="date" value="{{ e.date_to.strftime('%Y-%m-%d') if e.date_to else '' }}"
+                       class="inp-date" id="date-to-{{ e.id }}"
+                       {% if e.status == 'approved' %}readonly{% endif %}>
+              </div>
+            </td>
+
+            <td class="td-type">
+              {% if e.status == 'approved' %}
+                <span class="fval">
+                  {% if e.type == 'annual_carry' %}
+                      AL — Annual Leave (Carry Over)
+                    {% elif e.type == 'annual' %}
+                      AL — Annual Leave (Advanced)
+                    {% elif e.type == 'sick' %}
+                      SL — Sick Leave
+                    {% elif e.type == 'maternity' %}
+                      Me L — Maternity Leave
+                    {% elif e.type == 'marriage' %}
+                      Ma L — Marriage Leave
+                    {% elif e.type == 'paternity' %}
+                      Pa L — Paternity Leave
+                    {% elif e.type == 'personal' %}
+                      Per L — Personal Leave
+                    {% elif e.type == 'compensate' %}
+                      Co L — Compensatory Leave
+                    {% elif e.type == 'unpaid' %}
+                      Un L — Unpaid Leave
+                    {% else %}
+                      —
+                    {% endif %}
+                </span>
+              {% else %}
+                {# Web: dropdown select #}
+                <select id="leave-type-{{ e.id }}" class="inp-select leave-type-sel">
+                  <option value="">— select type —</option>
+                  <option value="annual_carry" {% if e.type == 'annual_carry' %}selected{% endif %}>AL — Annual Leave (Carry Over)</option>
+                  <option value="annual"       {% if e.type == 'annual' %}selected{% endif %}>AL — Annual Leave (Advanced)</option>
+                  <option value="sick"         {% if e.type == 'sick' %}selected{% endif %}>SL — Sick Leave</option>
+                  <option value="maternity"    {% if e.type == 'maternity' %}selected{% endif %}>Me L — Maternity Leave</option>
+                  <option value="marriage"     {% if e.type == 'marriage' %}selected{% endif %}>Ma L — Marriage Leave</option>
+                  <option value="paternity"    {% if e.type == 'paternity' %}selected{% endif %}>Pa L — Paternity Leave</option>
+                  <option value="personal"     {% if e.type == 'personal' %}selected{% endif %}>Per L — Personal Leave</option>
+                  <option value="compensate"   {% if e.type == 'compensate' %}selected{% endif %}>Co L — Compensatory Leave</option>
+                  <option value="unpaid"       {% if e.type == 'unpaid' %}selected{% endif %}>Un L — Unpaid Leave</option>
+                </select>
+                {# Print: hiện text thay vì dropdown #}
+                <span class="fval" style="display:none;">
+                  {{ {
+                      'annual_carry': 'AL — Annual Leave (Carry Over)',
+                      'annual': 'AL — Annual Leave (Advanced)',
+                      'sick': 'SL — Sick Leave',
+                      'maternity': 'Me L — Maternity Leave',
+                      'marriage': 'Ma L — Marriage Leave',
+                      'paternity': 'Pa L — Paternity Leave',
+                      'personal': 'Per L — Personal Leave',
+                      'compensate': 'Co L — Compensatory Leave',
+                      'unpaid': 'Un L — Unpaid Leave'
+                    }.get(e.type, '—') }}
+                </span>
+              {% endif %}
+            </td>
+
+            <td class="td-days">
+              <input type="number" min="1" step="0.5"
+                     value="{{ e.annual_leave or e.sick_leave or e.maternity_leave or
+                               e.pregnancy_leave or e.personal_leave or e.compensate_leave or
+                               e.unpaid_leave or 1 }}"
+                     class="inp-days days-input" id="days-{{ e.id }}"
+                     {% if e.status == 'approved' %}readonly{% endif %}>
+            </td>
+
+            <td class="td-notes">
+  <textarea class="inp-notes"
+            id="notes-{{ e.id }}"
+            placeholder="Add note…"
+            rows="1"
+            {% if e.status == 'approved' %}readonly{% endif %}>{{ e.notes or '' }}</textarea>
+</td>
+
+            <td class="td-sign">
+              {% if e.applicant_signed %}
+                {# Đã ký số: hiện ảnh cả web lẫn print #}
+                <div class="signed-display">
+                  <img src="{{ e.applicant_signed }}" class="sig-img" alt="Signed">
+                </div>
+              {% elif e.status == 'approved' %}
+                {# Approved nhưng chưa ký số: web hiện "—", print hiện ô trống #}
+                <span class="no-print" style="color:#aaa;font-size:12px;font-style:italic;">—</span>
+                <div class="sign-print-box"></div>
+              {% else %}
+                {# Pending: web hiện nút Sign, print hiện ô trống ký tay #}
+                <button type="button" class="btn-sign no-print"
+                        data-entry="{{ e.id }}" data-role="applicant"
+                        onclick="openSigModal('{{ e.id }}', {{ loop.index }})">
+                  <i class="bi bi-pen"></i> Sign
+                </button>
+                <input type="hidden" id="applicant-sig-{{ e.id }}" value="">
+                <div class="sign-print-box"></div>
+              {% endif %}
+            </td>
+
+            <td class="td-approval-status">
+              <span class="status-badge status-{{ e.status or 'pending' }}">
+                {% if e.status == 'approved' %}✓ Approved
+                {% elif e.status == 'rejected' %}✗ Rejected
+                {% else %}⏳ Pending{% endif %}
+              </span>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="3" class="tfoot-label">Total Days Used</td>
+            <td class="td-days" id="total-days">{{ al_used }}</td>
+            <td colspan="3"></td>
+          </tr>
+          <tr>
+            <td colspan="3" class="tfoot-label">Annual Leave Balance</td>
+            <td id="tfoot-balance" class="{% if remaining < 0 %}bal-negative{% else %}bal-positive{% endif %}">{{ remaining }}</td>
+            <td colspan="3"></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    {% if not view_only %}
+    <div class="ilr-table-toolbar no-print">
+      <button type="button" class="ilr-btn btn-add-row" onclick="addRow()">
+        <i class="bi bi-plus-lg"></i> Add Row
+      </button>
+      <button type="button" class="ilr-btn btn-delete-row" onclick="deleteLastRow()">
+        <i class="bi bi-trash"></i> Delete Row
+      </button>
+      <button type="button" class="ilr-btn btn-save-all" onclick="savePendingRows()">
+        <i class="bi bi-floppy"></i> Submit
+      </button>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+{# ══════════ SIGNATURE MODAL ══════════ #}
+<div id="sig-modal" class="sig-modal-overlay" style="display:none">
+  <div class="sig-modal-box">
+    <div class="sig-modal-head">
+      <div>
+        <div class="sig-modal-title" id="sig-modal-title">Applicant Signature — Row 1</div>
+        <div class="sig-modal-subtitle">Draw your signature below using mouse or finger</div>
+      </div>
+      <button type="button" class="sig-modal-close" onclick="closeSigModal()"><i class="bi bi-x-lg"></i></button>
+    </div>
+    <div class="sig-modal-body">
+      <canvas id="sig-canvas" width="512" height="160"></canvas>
+    </div>
+    <div class="sig-modal-foot">
+      <button type="button" class="ilr-btn sig-btn-cancel" onclick="closeSigModal()">Cancel</button>
+      <button type="button" class="ilr-btn sig-btn-clear"  onclick="clearSigCanvas()">Clear</button>
+      <button type="button" class="ilr-btn sig-btn-confirm" onclick="confirmSig()">
+        <i class="bi bi-check-lg"></i> Confirm
+      </button>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

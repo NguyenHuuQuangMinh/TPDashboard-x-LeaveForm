@@ -1,1 +1,1 @@
-from .ConnectDB import get_postgres_engine
+from .ConnectDB import engine

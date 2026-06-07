@@ -1,0 +1,229 @@
+    body { background: #f5f0e8; margin: 0; font-family: inherit; }
+    .ilr-topbar {
+      display: flex; align-items: center; gap: 10px; padding: 12px 24px;
+      background: #fff; border-bottom: 1px solid #e8e2d9; flex-wrap: wrap;
+    }
+    .search-inline { display: inline-flex; align-items: center; gap: 8px; }
+    .search-inline label { font-size: 13px; font-weight: 600; color: #2c2218; white-space: nowrap; }
+    .search-inline input {
+      padding: 7px 12px; border: 1px solid #d7cec2; border-radius: 8px;
+      font-size: 13px; width: 170px; outline: none; color: #333;
+    }
+    .search-inline input:focus { border-color: #2c2218; }
+    .search-inline button {
+      padding: 7px 14px; background: #2c2218; color: #fff; border: none;
+      border-radius: 8px; font-size: 13px; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 5px;
+    }
+    .search-inline button:hover { opacity: .85; }
+    .error-msg { color: #c0392b; font-size: 12px; margin-left: 4px; }
+    .topbar-export { display: flex; gap: 6px; align-items: center; margin-left: auto; }
+    .ilr-wrap { max-width: 1200px; margin: 0 auto; padding: 24px 16px; }
+    .sign-print-box { display: none; }
+    .td-notes { width: 260px; min-width: 260px; }
+    .inp-notes {
+      width: 100%; min-height: 38px; resize: none; overflow-y: hidden;
+      padding: 8px 10px; border: 1px solid #d7cec2; border-radius: 6px;
+      font-size: 13px; line-height: 1.5; background: #fff; color: #222;
+      font-family: inherit; white-space: pre-wrap; word-break: break-word;
+      box-sizing: border-box; transition: height 0.08s ease;
+    }
+    .inp-date[readonly], .inp-notes[readonly] { border-bottom-color: transparent; cursor: default; color: #444; }
+    .selected-row { background-color: #fcf8f2 !important; outline: 2px solid #2c2218; }
+    .td-approval-status { text-align: center; }
+    .ilr-table thead th.th-approval-status { min-width: 140px; }
+    .ilr-table-toolbar { padding: 14px 30px; display: flex; gap: 10px; border-top: 1px solid #e8e2d9; }
+    .btn-add-row { background: #fff; border: 1px solid #2c2218; color: #2c2218; }
+    .btn-save-all { background: #2c2218; border: 1px solid #2c2218; color: #fff; }
+    .btn-add-row:hover { background: #f5f0e8; }
+    .btn-save-all:hover { opacity: .85; }
+
+    /* ══════════════════════════════════════
+       TABLE WRAP — always scrollable
+       ══════════════════════════════════════ */
+    .ilr-table-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      width: 100%;
+    }
+
+    @media print {
+      @page { size: A4 landscape; margin: 10mm 12mm; }
+      .no-print, .ilr-topbar, .ilr-table-toolbar, .btn-sign, .sig-modal-overlay,
+      .th-approval-status, .td-approval-status,
+      nav, header, .navbar, .sidebar, .topbar,
+      [class*="navbar"], [class*="sidebar"],
+      [class*="header"]:not(.ilr-card-head) { display: none !important; }
+      body { background: #fff !important; padding: 0 !important;
+        -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+      .ilr-wrap { padding: 0 !important; }
+      .ilr-card { border: none !important; box-shadow: none !important; }
+      .inp-notes, .inp-date, .inp-days { display: none !important; }
+      .inp-select { display: none !important; }
+      .notes-print-div {
+        font-size: 10px !important; word-break: break-word !important; white-space: normal !important;
+        border-bottom: 1px solid #ccc !important; min-height: 18px !important; padding: 2px 0 !important;
+        width: 100% !important; color: #111 !important; display: block !important;
+      }
+      .date-print-div {
+        font-size: 10px !important; border-bottom: 1px solid #ccc !important;
+        display: inline-block !important; min-width: 80px !important; color: #111 !important;
+      }
+      .days-print-div {
+        font-size: 11px !important; border-bottom: 1px solid #ccc !important;
+        text-align: center !important; min-width: 32px !important;
+        display: inline-block !important; color: #111 !important;
+      }
+      .fval { font-size: 10px !important; display: inline !important; }
+      .td-notes { min-width: 160px !important; max-width: 220px !important;
+        white-space: normal !important; word-break: break-word !important; }
+      .sign-print-box { display: block !important; width: 110px; height: 38px;
+        border-bottom: 1.5px solid #555; margin: 0 auto; }
+      .sig-img { max-width: 100px !important; max-height: 36px !important;
+        display: block !important; margin: 0 auto !important; }
+      .td-sign { min-width: 110px !important; text-align: center !important; }
+      .ilr-table { font-size: 10px !important; }
+      .ilr-table th, .ilr-table td { padding: 6px 8px !important; }
+      .leave-row { page-break-inside: avoid !important; }
+      tfoot { page-break-inside: avoid !important; }
+    }
+
+    .sig-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 9999;
+      display: flex; align-items: center; justify-content: center; }
+    .sig-modal-box { background: #fff; border-radius: 8px; width: 560px; max-width: 95vw;
+      box-shadow: 0 12px 48px rgba(0,0,0,.22); overflow: hidden; }
+    .sig-modal-head { padding: 20px 24px 14px; display: flex; align-items: flex-start;
+      justify-content: space-between; border-bottom: 1px solid #eee; }
+    .sig-modal-title { font-size: 16px; font-weight: 700; color: #1a1a1a; margin-bottom: 4px; }
+    .sig-modal-subtitle { font-size: 12px; color: #888; }
+    .sig-modal-close { background: none; border: none; font-size: 18px; color: #aaa; cursor: pointer; }
+    .sig-modal-close:hover { color: #333; }
+    .sig-modal-body { padding: 16px 24px; background: #fdf9f3; display: flex; justify-content: center; }
+    #sig-canvas { border: 1.5px solid #d9cfc2; border-radius: 5px; background: #fff;
+      cursor: crosshair; display: block; touch-action: none; }
+    .sig-modal-foot { padding: 14px 24px; display: flex; gap: 10px;
+      justify-content: flex-end; border-top: 1px solid #eee; }
+    .sig-btn-cancel, .sig-btn-clear { background: #fff; border: 1px solid #ccc; color: #333; }
+    .sig-btn-cancel:hover, .sig-btn-clear:hover { background: #f5f5f5; }
+    .sig-btn-confirm { background: #2c2218; border: 1px solid #2c2218; color: #fff; font-weight: 600; }
+    .sig-btn-confirm:hover { opacity: .85; }
+
+    /* ══════════════════════════════════════
+       MOBILE RESPONSIVE
+       ══════════════════════════════════════ */
+    @media (max-width: 640px) {
+      .ilr-wrap { padding: 12px 8px; }
+      .ilr-card-head {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 10px !important;
+        padding: 16px !important;
+      }
+      .ilr-card-head > div:last-child {
+        align-items: flex-start !important;
+        width: 100%;
+      }
+      .head-right { font-size: 10px !important; }
+      .ilr-info {
+        flex-direction: column !important;
+        gap: 0 !important;
+      }
+      .ilr-info-col { width: 100% !important; }
+      .balance-cards {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 8px !important;
+      }
+      .balance-card { padding: 10px !important; }
+      .bc-val { font-size: 20px !important; }
+      .bc-label { font-size: 10px !important; }
+
+      /* FIX: table scroll wrapper */
+      .ilr-table-wrap {
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch;
+        width: 100% !important;
+        display: block !important;
+      }
+
+      /* FIX: giảm min-width để scroll mượt hơn */
+      .ilr-table {
+        min-width: 560px;
+        font-size: 11px !important;
+        table-layout: auto;
+      }
+
+      .ilr-table th, .ilr-table td {
+        padding: 5px 5px !important;
+        white-space: nowrap;
+      }
+
+      /* FIX: cột notes có thể wrap */
+      .td-notes {
+        min-width: 120px !important;
+        width: 120px !important;
+        white-space: normal !important;
+      }
+
+      /* FIX: cột type nhỏ gọn hơn */
+      .th-type { min-width: 100px !important; }
+      .td-type { min-width: 100px !important; max-width: 130px !important; }
+
+      /* FIX: cột sign nhỏ gọn hơn */
+      .th-sign, .td-sign {
+        min-width: 72px !important;
+        width: 72px !important;
+      }
+
+      /* FIX: cột approval status nhỏ hơn */
+      .th-approval-status, .td-approval-status {
+        min-width: 90px !important;
+        width: 90px !important;
+      }
+
+      .inp-notes { min-height: 30px !important; font-size: 11px !important; }
+      .inp-date { font-size: 10px !important; width: 100px !important; padding: 4px 4px !important; }
+      .inp-days { width: 42px !important; font-size: 11px !important; }
+      .inp-select { font-size: 10px !important; max-width: 98px !important; }
+
+      .ilr-table-toolbar {
+        padding: 10px 12px !important;
+        flex-wrap: wrap !important;
+        gap: 8px !important;
+      }
+      .ilr-btn {
+        font-size: 12px !important;
+        padding: 7px 12px !important;
+      }
+      .sig-modal-box { width: 95vw !important; }
+      #sig-canvas { width: 100% !important; height: 120px !important; }
+      .search-inline { flex-wrap: wrap; gap: 6px; }
+      .search-inline input { width: 140px !important; }
+      .search-inline button { font-size: 12px !important; padding: 6px 10px !important; }
+      .topbar-export { margin-left: 0 !important; width: 100%; }
+      .topbar-export button { font-size: 11px !important; padding: 5px 10px !important; }
+
+      /* FIX: date range wrap trên 2 dòng cho đỡ chật */
+      .date-range {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 2px !important;
+        align-items: flex-start !important;
+      }
+      .date-sep { font-size: 10px !important; line-height: 1 !important; }
+    }
+    .PDF-button{
+        background:#b42318;color:#fff;border:1px solid #b42318;
+                   padding:7px 13px;border-radius:8px;font-size:13px;cursor:pointer;
+                   display:inline-flex;align-items:center;gap:5px;
+    }
+    .excel-button{
+        background:#1d6f42;color:#fff;border:1px solid #1d6f42;
+                   padding:7px 13px;border-radius:8px;font-size:13px;cursor:pointer;
+                   display:inline-flex;align-items:center;gap:5px;
+    }
+    .print-button{
+        background:#2c2218;color:#fff;border:1px solid #2c2218;
+                   padding:7px 13px;border-radius:8px;font-size:13px;cursor:pointer;
+                   display:inline-flex;align-items:center;gap:5px;
+    }

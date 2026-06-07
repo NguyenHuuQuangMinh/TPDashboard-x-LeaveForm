@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>{% block title %}Leave Record{% endblock %}</title>
+
+    <!-- CSS dùng chung -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/Leave_form/leave_form.css') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='picture/Logo.png') }}">
+    {% block head %}{% endblock %}
+</head>
+<body>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="toast-overlay">
+          {% for category, message in messages %}
+            <div class="toast {{ category }}">
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <main class="main-content">
+        {% block content %} {% endblock %}
+
+        {% block scripts %}{% endblock %}
+
+
+
+    </main>
+
+</body>
+<script src="{{ url_for('static', filename='js/leave_form/leave-form-public.js') }}"></script>
+<script src="{{ url_for('static', filename='js/leave_form/leave-form-manager.js') }}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</html>

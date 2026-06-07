@@ -1,0 +1,374 @@
+.status-badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.status-badge.active {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.status-badge.inactive {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.td-path {
+    padding: 10px 14px;
+    text-align: left;
+}
+
+.path-preview {
+    color: var(--ink-mid);
+    font-size: 12.5px;
+    line-height: 1.6;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.nts-table th:nth-child(1),
+.nts-table td:nth-child(1) {
+    width: 8%;
+}
+
+.nts-table th:nth-child(2),
+.nts-table td:nth-child(2) {
+    width: 25%;
+}
+
+.nts-table th:nth-child(3),
+.nts-table td:nth-child(3) {
+    width: 35%;
+}
+
+.nts-table th:nth-child(4),
+.nts-table td:nth-child(4) {
+    width: 15%;
+}
+
+.nts-table th:nth-child(5),
+.nts-table td:nth-child(5) {
+    width: 17%;
+}
+
+.td-window {
+    text-align: center !important;
+    vertical-align: middle;
+}
+
+.nts-table th:last-child,
+.nts-table td:last-child {
+    padding-left: 16px;
+    padding-right: 16px;
+}
+
+/* ===== FORM ===== */
+
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    display: block;
+
+    margin-bottom: 8px;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    letter-spacing: .12em;
+
+    text-transform: uppercase;
+
+    color: var(--gold);
+}
+
+/* INPUT + SELECT */
+
+.form-group input,
+.form-group select {
+
+    width: 100%;
+
+    height: 42px;
+
+    padding: 0 14px;
+
+    border: 1px solid var(--border);
+
+    border-radius: 10px;
+
+    background: #FFFDF8;
+
+    color: var(--ink);
+
+    font-size: 13px;
+
+    transition: all .2s ease;
+
+    box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+
+    outline: none;
+
+    border-color: var(--gold);
+
+    box-shadow: 0 0 0 3px rgba(190, 145, 74, .15);
+}
+
+/* NUMBER INPUT */
+
+.form-group input[type="number"] {
+
+    font-family: 'IBM Plex Mono', monospace;
+}
+
+/* ===== ACTIONS ===== */
+
+.crud-actions {
+
+    display: flex;
+
+    justify-content: flex-end;
+
+    gap: 12px;
+
+    margin-top: 30px;
+
+    padding-top: 20px;
+
+    border-top: 1px solid var(--border);
+}
+
+/* SAVE */
+
+.btn-save {
+
+    border: none;
+
+    background: var(--gold);
+
+    color: white;
+
+    padding: 11px 22px;
+
+    border-radius: 10px;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: .2s;
+}
+
+.btn-save:hover {
+
+    transform: translateY(-1px);
+
+    opacity: .92;
+}
+
+
+.btn-back {
+
+    border: 1px solid var(--border);
+
+    background: white;
+
+    color: var(--ink);
+
+    padding: 11px 22px;
+
+    border-radius: 10px;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: .2s;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+}
+
+.btn-back:hover {
+
+    transform: translateY(-1px);
+
+    background: #f8f4ee;
+
+    border-color: var(--gold);
+
+    color: var(--gold);
+}
+/* DELETE */
+
+.btn-delete {
+
+    border: 1px solid #ef4444;
+
+    background: white;
+
+    color: #dc2626;
+
+    padding: 11px 22px;
+
+    border-radius: 10px;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: .2s;
+}
+
+.btn-delete:hover {
+
+    background: #fef2f2;
+}
+
+/* ===== READONLY INFO ===== */
+
+.form-info {
+
+    background: #FFFDF8;
+
+    border: 1px solid var(--border);
+
+    border-radius: 12px;
+
+    padding: 14px 16px;
+
+    margin-bottom: 22px;
+}
+
+.form-info-title {
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    letter-spacing: .12em;
+
+    text-transform: uppercase;
+
+    color: var(--gold);
+
+    margin-bottom: 8px;
+}
+
+.form-info-value {
+
+    color: var(--ink);
+
+    font-size: 13px;
+}
+
+/* ===== 2 COLUMNS ===== */
+
+.form-grid {
+
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 16px;
+}
+
+@media (max-width: 768px) {
+
+    .form-grid {
+
+        grid-template-columns: 1fr;
+    }
+
+    .crud-actions {
+
+        flex-direction: column;
+    }
+
+    .btn-save,
+    .btn-delete {
+
+        width: 100%;
+    }
+}
+.icon-input {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.icon-input i {
+    width: 24px;
+    text-align: center;
+    font-size: 18px;
+}
+
+.btn-create {
+    height: 42px;
+
+    padding: 0 18px;
+
+    border-radius: 10px;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    cursor: pointer;
+
+    border: 1px solid transparent;
+
+    text-decoration: none;
+
+    transition: all .2s ease;
+
+    margin-bottom: 0;
+
+    /* giống style SEARCH */
+    background: linear-gradient(
+        180deg,
+        #4f9cff,
+        #1d6ef2
+    );
+
+    color: white;
+
+    box-shadow: 0 6px 16px rgba(29,110,242,.22);
+}
+
+.btn-create:hover {
+    transform: translateY(-1px);
+
+    box-shadow: 0 10px 22px rgba(29,110,242,.28);
+
+    filter: brightness(1.03);
+}
+
+.btn-create:active {
+    transform: translateY(0);
+    box-shadow: 0 6px 16px rgba(29,110,242,.22);
+}

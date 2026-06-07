@@ -1,0 +1,73 @@
+<div class="route-actions">
+<form id="dpmForm" method="POST" action="{{ url_for('departments.update_dpm', dpm_id=dpms.id) }}">
+
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    <input type="hidden" value="{{ dpms.id }}">
+
+    <div class="form-grid">
+
+        <div class="form-group">
+
+            <label>Name</label>
+
+            <input type="text" name="name" value="{{ dpms.name }}" required>
+
+        </div>
+
+        <div class="form-group">
+
+            <label>Status</label>
+
+            <select name="status">
+
+                <option value="1" {% if dpms.status %} selected {% endif %}>
+                    Active
+                </option>
+
+                <option
+                    value="0" {% if not dpms.status %} selected {% endif %}>
+                    Inactive
+                </option>
+
+            </select>
+
+        </div>
+
+    </div>
+</form>
+<form
+    id="deleteForm_dpm"
+    method="POST"
+    action="{{ url_for('departments.delete_dpm', dpm_id=dpms.id) }}"
+    onsubmit="return confirm('Delete this departments?')"
+>
+
+    <input
+        type="hidden"
+        name="csrf_token"
+        value="{{ csrf_token() }}"
+    >
+
+</form>
+<div class="crud-actions">
+
+        <button
+            class="btn-save"
+            type="submit"
+            form="dpmForm"
+        >
+            Save
+        </button>
+
+        <button
+            class="btn-delete"
+            type="submit"
+            form="deleteForm_dpm"
+        >
+            Delete
+        </button>
+
+    </div>
+
+</div>

@@ -1,0 +1,155 @@
+<div class="route-actions">
+<form id="userForm" method="POST" action="{{ url_for('user_manager.update_user', user_id=user.Id) }}">
+
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    <input type="hidden" value="{{ user.Id }}">
+
+    <div class="form-grid">
+
+        <div class="form-group">
+
+            <label>Name</label>
+
+            <input type="text" name="FullName" value="{{ user.FullName }}" required>
+
+        </div>
+
+        <div class="form-group">
+
+            <label>Working Location</label>
+
+            <input type="text" name="working_location" value="{{ user.working_location }}">
+
+        </div>
+    </div>
+
+    <div class="form-grid">
+        <div class="form-group">
+        <label>Role</label>
+        <select name="RoleId" id="roleSelect">
+            {% for role in roles %}
+                <option
+                    value="{{ role.RoleId }}"
+                    {% if user.RoleId == role.RoleId %}
+                        selected
+                    {% endif %}
+                >
+                    {{ role.Rolename }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+        <div class="form-group">
+        <label>Department</label>
+
+        <select name="DepartmentId" id="departmentSelect">
+            {% for dpm in dpms %}
+                <option
+                    value="{{ dpm.id }}"
+                    {% if user.DepartmentId == dpm.id %}
+                        selected
+                    {% endif %}
+                >
+                    {{ dpm.name }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    </div>
+
+    <div class="form-grid">
+
+        <div class="form-group">
+            <label>Job</label>
+            <input type="text" name="Job_title" value="{{ user.Job_title }}">
+        </div>
+
+        <div class="form-group">
+            <label>Report To</label>
+            <input type="text" name="report_to" value="{{ user.report_to }}">
+        </div>
+
+    </div>
+
+    <div class="form-grid">
+        <div class="form-group">
+            <label>To Email</label>
+            <input type="text" name="to_email" value="{{ user.to_email }}">
+        </div>
+
+        <div class="form-group">
+            <label>CC Email</label>
+            <input type="text" name="cc_email" value="{{ user.cc_email }}">
+        </div>
+    </div>
+
+    <div class="form-grid">
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" name="PasswordHash" id="pass">
+        </div>
+
+        <div class="form-group">
+            <label>Password Check</label>
+            <input type="password" id="pass_check">
+            <small id="passError" class="password-error"></small>
+        </div>
+    </div>
+
+    <div class="form-group">
+
+            <label>Status</label>
+
+            <select name="Status">
+
+                <option value="1" {% if user.Status %} selected {% endif %}>
+                    Active
+                </option>
+
+                <option
+                    value="0" {% if not user.Status %} selected {% endif %}>
+                    Inactive
+                </option>
+
+            </select>
+
+        </div>
+</form>
+<form
+    id="deleteForm"
+    method="POST"
+    action="{{ url_for('user_manager.delete_user', user_id=user.Id) }}"
+    onsubmit="return confirm('Delete this User ?')"
+>
+
+    <input
+        type="hidden"
+        name="csrf_token"
+        value="{{ csrf_token() }}"
+    >
+
+</form>
+<div class="crud-actions">
+
+        <button
+            class="btn-save"
+            type="submit"
+            form="userForm"
+        >
+            Save
+        </button>
+
+        <button
+            class="btn-delete"
+            type="submit"
+            form="deleteForm"
+        >
+            Delete
+        </button>
+
+    </div>
+
+</div>

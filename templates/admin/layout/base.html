@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/General/style.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='picture/Logo.png') }}">
     <link rel="shortcut icon" href="{{ url_for('static', filename='picture/Logo.png') }}">
     {% block head %}{% endblock %}
@@ -27,32 +28,108 @@
     {% endwith %}
 
     {% if session.get('user_id') %}
-        {% include 'partials/header/header.html' %}
+        {% include 'partials/header.html' %}
     {% endif %}
 
-    <main class="container">
+    <main class="main-content">
         {% block content %} {% endblock %}
-<!--        <script src="{{ url_for('static', filename='js/Misa/favourite.js') }}"></script>-->
-<!--        <script src="{{ url_for('static', filename='js/Misa/downloadReport.js') }}"></script>-->
-<!--        <script src="{{ url_for('static', filename='js/Misa/CloseWeb.js') }}"></script>-->
-<!--        <script src="{{ url_for('static', filename='js/Misa/Delete.js') }}"></script>-->
-<!--        <script src="{{ url_for('static', filename='js/Misa/DeleteReport.js') }}"></script>-->
-<!--        <script src="{{ url_for('static', filename='js/Misa/DeleteReportCate.js') }}"></script>-->
-<!--        <script src="{{ url_for('static', filename='js/Misa/DeleteRole.js') }}"></script>-->
-<!--        <script src="{{ url_for('static', filename='js/Misa/Genarate.js') }}"></script>-->
-<!--        <script src="{{ url_for('static', filename='js/Misa/DeleteLink.js') }}"></script>-->
+
+        {# ── DETAIL PANEL (slide in) ── #}
+        <div class="detail-overlay crud-overlay" id="detailOverlay">
+          <div class="detail-panel " id="detailPanel">
+            <button class="panel-close" data-crud-close id="panelClose"><i class="bi bi-x-lg"></i></button>
+            <div class="panel-loading" id="panelLoading"><div class="spinner"></div></div>
+            <div class="panel-body" id="panelBody" style="display:none">
+
+              <div class="panel-agent-name" id="panelAgentName"></div>
+
+                <div class="section-title">Message Text</div>
+                <div class="message-box" id="panelMessageText"></div>
+              {# Revenue years #}
+              <div class="section-title">Revenue</div>
+              <div id="revenueYears"></div>
+
+              {# Contact Info #}
+              <div class="section-title" style="margin-top:24px">Contact Info</div>
+              <table class="contact-table">
+                <thead><tr><th>#</th><th>CONTACT NAME</th><th>TITLE</th><th>EMAIL</th><th>PHONE</th></tr></thead>
+                <tbody id="contactBody"></tbody>
+              </table>
+
+            </div>
+          </div>
+        </div>
         {% block scripts %}{% endblock %}
 
-<!--        <div id="loading-backdrop" style="display:none;"></div>-->
-<!--        <div id="loading-overlay" style="display:none;">-->
-<!--          <div class="loading-text-anim">-->
-<!--            <i>L</i><i>O</i><i>A</i><i>D</i><i>I</i><i>N</i><i>G</i>-->
-<!--          </div>-->
-<!--        </div>-->
+        {# - CRUD FORM - #}
+        <div class="detail-overlay close-crud" id="crudOverlay">
 
+            <div class="detail-panel ">
 
+                <button class="panel-close" data-crud-close>
+                    <i class="bi bi-x-lg"></i>
+                </button>
+
+                <div class="panel-loading" id="crudLoading">
+                    <div class="spinner"></div>
+                </div>
+
+                <div class="panel-body" id="crudBody">
+
+                    <div class="panel-agent-name" id="crudTitle">
+                        Edit Route
+                    </div>
+
+                    <div id="crudContent"></div>
+
+                </div>
+
+            </div>
+
+        </div>
+        {# - Chart Detail -#}
+        <div id="detailModal" class="detail-modal">
+            <div class="detail-box">
+                <div class="detail-header">
+                    <div id="detailTitle">Detail</div>
+                    <button id="closeDetailModal">x</button>
+                </div>
+                <div class="detail-body">
+                    <div class="detail-filter">
+
+                        <div class="filter-field">
+
+                            <label>FROM DATE</label>
+
+                            <input type="date" id="detailFromDate">
+                        </div>
+
+                        <div class="filter-field">
+
+                            <label>TO DATE</label>
+
+                            <input type="date" id="detailToDate">
+                        </div>
+
+                        <button id="detailFilterBtn" class="btn-search">
+                            Filter
+                        </button>
+
+                    </div>
+                    <table class="detail-table">
+                        <div class="panel-loading" id="detailLoading"><div class="spinner"></div></div>
+                        <thead id="detailHead"></thead>
+                        <tbody id="detailBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </main>
 
 </body>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="{{ url_for('static', filename='js/Generate/dropdown.js') }}"></script>
+<script src="{{ url_for('static', filename='js/Generate/slidebar.js') }}"></script>
+<script src="{{ url_for('static', filename='js/Generate/nts_details.js') }}"></script>
+<script type="module" src="{{ url_for('static', filename='js/admin/admin.js') }}"></script>
 </html>

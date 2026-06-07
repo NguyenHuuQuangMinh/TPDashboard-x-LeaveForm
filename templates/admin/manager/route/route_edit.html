@@ -1,0 +1,155 @@
+<div class="route-actions">
+<form id="routeForm" method="POST" action="{{ url_for('routes.update_route', route_id=route.id) }}">
+
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    <input type="hidden" name="route_id" value="{{ route.id }}">
+
+    <div class="form-grid">
+
+        <div class="form-group">
+
+            <label>Name</label>
+
+            <input type="text" id="routeName" name="route_name" value="{{ route.name }}" required>
+
+        </div>
+
+        <div class="form-group">
+
+            <label>Window Type</label>
+
+            <select id="windowType" name="window_type">
+
+                <option value="admin" {% if route.window_type == 'admin' %} selected {% endif %} >
+                    Admin
+                </option>
+
+                <option value="user" {% if route.window_type == 'user' %} selected {% endif %} >
+                    User
+                </option>
+
+            </select>
+
+        </div>
+
+    </div>
+
+    <div class="form-grid">
+
+        <div class="form-group">
+
+            <label>Path</label>
+
+            <input type="text" id="routePath" name="route_path" value="{{ route.path }}">
+
+        </div>
+
+        <div class="form-group">
+
+            <label>Icon</label>
+
+            <div class="icon-input">
+
+                <i id="iconPreview" class="{{ route.icon }}"></i>
+
+                <input type="text" id="routeIcon" name="icon" value="{{ route.icon }}">
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="form-grid">
+
+        <div class="form-group">
+
+            <label>Sort Order</label>
+
+            <input type="number" id="sortOrder" name="sort_order" value="{{ route.sort_order }}" required>
+
+        </div>
+
+        <div class="form-group">
+
+            <label>Status</label>
+
+            <select id="isActive" name="is_active">
+
+                <option value="true" {% if route.is_active %} selected {% endif %}>
+                    Active
+                </option>
+
+                <option
+                    value="false" {% if not route.is_active %} selected {% endif %}>
+                    Inactive
+                </option>
+
+            </select>
+
+        </div>
+
+    </div>
+
+    <div class="form-group">
+
+        <label>Parent</label>
+
+        <select name="parent_id" id="parentId">
+
+            <option value="0">
+                -- No Parent --
+            </option>
+
+            {% for p in parents %}
+
+                <option value="{{ p.id }}"
+                    {% if route.parent_id == p.id %}
+                        selected
+                    {% endif %}
+                >
+                    {{ p.name }} ({{ p.window_type }})
+                </option>
+
+            {% endfor %}
+
+        </select>
+
+    </div>
+</form>
+<form
+    id="deleteForm"
+    method="POST"
+    action="{{ url_for('routes.delete_route', route_id=route.id) }}"
+    onsubmit="return confirm('Delete this route?')"
+>
+
+    <input
+        type="hidden"
+        name="csrf_token"
+        value="{{ csrf_token() }}"
+    >
+
+</form>
+<div class="crud-actions">
+
+        <button
+            class="btn-save"
+            type="submit"
+            form="routeForm"
+        >
+            Save
+        </button>
+
+        <button
+            class="btn-delete"
+            type="submit"
+            form="deleteForm"
+        >
+            Delete
+        </button>
+
+    </div>
+
+</div>

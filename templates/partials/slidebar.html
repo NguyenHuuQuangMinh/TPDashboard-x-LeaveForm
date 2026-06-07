@@ -1,0 +1,92 @@
+<div class="sidebar" id="sidebar">
+
+    <!-- HEADER -->
+    <div class="sidebar-header">
+
+        <img
+            src="{{ url_for('static', filename='picture/Logo.png') }}"
+            class="logo-mini"
+            alt="logo"
+        >
+
+        <img
+            src="{{ url_for('static', filename='picture/LogoLogin.png') }}"
+            class="logo-full"
+            alt="logo"
+        >
+    </div>
+
+    <!-- MENU -->
+    <div class="sidebar-menu">
+    {% set current_window = 'admin' if session.get('is_admin') == 1 else 'user' %}
+
+    {% for parent in sidebar_routes if parent.parent_id == 0 and parent.window_type == current_window %}
+
+        {% set children = sidebar_routes
+            | selectattr('parent_id', 'equalto', parent.id)
+            | selectattr('window_type', 'equalto', current_window)
+            | list %}
+        {% if children %}
+
+        {% set is_child_active =
+                children
+                | selectattr('path', 'equalto', request.endpoint)
+                | list
+                | length > 0
+            %}
+        {% set is_parent_active =
+                request.endpoint == parent.path
+            %}
+        <div class="sidebar-group">
+
+            <div class="sidebar-item parent-item {% if is_parent_active or is_child_active %}active{% endif %}">
+                <div class="sidebar-left">
+                    <i class="{{ parent.icon }}"></i>
+                    <span>{{ parent.name }}</span>
+                </div>
+
+                <i class="bi bi-chevron-down arrow {% if is_parent_active or is_child_active %}active{% endif %}"></i>
+
+            </div>
+
+            <div class="sidebar-children">
+
+                {% for child in children %}
+
+                <a href="{{ url_for(child.path) }}"
+                   class="sidebar-sub-item {% if request.endpoint == child.path %}active{% endif %}">
+
+                    <i class="{{ child.icon }}"></i>
+
+                    <span>{{ child.name }}</span>
+
+                </a>
+
+                {% endfor %}
+
+        </div>
+
+    </div>
+
+    {% else %}
+
+    <a href="{{ url_for(parent.path) }}"
+       class="sidebar-item {% if request.endpoint == parent.path %}active{% endif %}">
+
+        <i class="{{ parent.icon }}"></i>
+
+        <span>{{ parent.name }}</span>
+
+    </a>
+
+    {% endif %}
+
+{% endfor %}
+
+</div>
+
+</div>
+
+<div class="sidebar-overlay"
+     id="sidebarOverlay"
+     onclick="closeSidebar()"></div>

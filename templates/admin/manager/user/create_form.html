@@ -1,0 +1,134 @@
+<div class="route-actions">
+<form id="userForm" method="POST" action="{{ url_for('user_manager.create_user') }}">
+
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    <div class="form-grid">
+        <div class="form-group">
+
+            <label>UserName</label>
+
+            <input type="text" name="Username" required>
+
+        </div>
+
+        <div class="form-group">
+
+            <label>FullName</label>
+
+            <input type="text" name="FullName" required>
+
+        </div>
+
+    </div>
+
+    <div class="form-grid">
+
+        <div class="form-group">
+
+            <label>Working Location</label>
+
+            <input type="text" name="working_location">
+
+        </div>
+
+        <div class="form-group">
+        <label>Role</label>
+        <select name="RoleId" id="roleSelect" required>
+            {% for role in roles %}
+                <option value="{{ role.RoleId }}">
+                    {{ role.Rolename }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    </div>
+
+    <div class="form-grid">
+        <div class="form-group">
+            <label>Department</label>
+
+            <select name="DepartmentId" id="departmentSelect">
+                {% for dpm in dpms %}
+                    <option
+                        value="{{ dpm.id }}">
+                        {{ dpm.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Job</label>
+            <input type="text" name="Job_title" id="jobTitle" required>
+        </div>
+
+    </div>
+
+    <div class="form-grid">
+
+        <div class="form-group">
+            <label>Report To</label>
+            <input type="text" name="report_to" id="reportTo" required>
+        </div>
+
+         <div class="form-group">
+            <label>To Email</label>
+            <input type="text" name="to_email">
+        </div>
+
+    </div>
+    <div class="form-grid">
+
+        <div class="form-group">
+            <label>CC Email</label>
+            <input type="text" name="cc_email">
+        </div>
+
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" name="PasswordHash" id="pass" required>
+        </div>
+
+    </div>
+
+    <div class="form-grid">
+
+        <div class="form-group">
+            <label>Password Check</label>
+            <input type="password" id="pass_check">
+            <small id="passError" class="password-error"></small>
+        </div>
+
+        <div class="form-group">
+            <label>Status</label>
+
+            <input type="text" value="Active" readonly>
+
+            <input type="hidden" name="Status" value="1">
+        </div>
+
+    </div>
+    </form>
+    <div class="crud-actions">
+
+            <button
+                class="btn-save"
+                type="submit"
+                form="userForm"
+            >
+                Create
+            </button>
+
+            <button
+                class="btn-back"
+                type="button"
+                data-crud-close
+            >
+                Back
+            </button>
+
+        </div>
+
+    </div>

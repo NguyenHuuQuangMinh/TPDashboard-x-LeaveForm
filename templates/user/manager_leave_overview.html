@@ -1,0 +1,244 @@
+{% extends "user/layout/base.html" %}
+
+{% block title %}Leave Overview — {{ now.year }}{% endblock %}
+
+{% block head %}
+
+{% endblock %}
+
+{% block content %}
+<div class="card">
+
+  {# ── Header ── #}
+  <div class="header-row">
+    <img src="{{ url_for('static', filename='picture/Logo.png') }}" height="40">
+    <span class="doc-id" style="margin-left:16px;">TOI-AHR-LR-F01Nov15</span>
+    <div style="margin-left:auto;">
+      <a href="{{ url_for('user.home') }}"
+         style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;
+                border:1px solid #ddd;border-radius:8px;font-size:13px;
+                color:#555;text-decoration:none;background:#fafafa;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+          <polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+        Home
+      </a>
+      <a href="{{ url_for('leave.leave') }}"
+   style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;
+          border:1px solid #ddd;border-radius:8px;font-size:13px;
+          color:#555;text-decoration:none;background:#fafafa;">
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+    <line x1="16" y1="2" x2="16" y2="6"/>
+    <line x1="8" y1="2" x2="8" y2="6"/>
+    <line x1="3" y1="10" x2="21" y2="10"/>
+  </svg>
+  Details Manager Leave
+</a>
+    </div>
+  </div>
+
+  {# ── Manager banner ── #}
+  {% if role == 3 %}
+  <div class="dept-banner">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1e40af" stroke-width="2">
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+    </svg>
+    Bạn đang xem với quyền <strong>Manager</strong> — chỉ hiển thị nhân viên trong department
+    <span class="dept-tag">{{ department }}</span>
+  </div>
+  {% endif %}
+
+  {# ── Title ── #}
+  <div class="title-row">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/>
+      <path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M21 21v-2a4 4 0 0 0-3-3.85"/>
+    </svg>
+    <h1>Annual Leave Overview — {{ now.year if now else '2026' }}</h1>
+  </div>
+
+  {# ── Tabs ── #}
+  <div class="tabs">
+    <button class="tab" id="tab-btn-overview" onclick="switchTab('overview')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+        <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+      </svg>
+      Tổng quan nhân viên
+    </button>
+    <button class="tab" id="tab-btn-pending" onclick="switchTab('pending')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+      </svg>
+      Đơn chờ duyệt
+      <span class="badge">{{ pending_entries | length }}</span>
+    </button>
+
+    <div class="search-wrap" id="search-area">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input id="usearch" type="text" placeholder="ID, username hoặc tên..." oninput="doFilter()"/>
+      <button class="clrbtn" id="clrbtn" onclick="doClear()" title="Xóa">&#x2715;</button>
+    </div>
+  </div>
+
+  {# ════ TAB 1: Tổng quan nhân viên ════ #}
+  <div class="tab-panel" id="panel-overview">
+    <table>
+      <thead>
+        <tr>
+          <th style="width:60px">User ID</th>
+          <th>Full Name</th>
+          {% if role == 1 %}<th style="width:110px">Department</th>{% endif %}
+          <th style="width:110px">Reports To</th>
+          <th class="center" style="width:130px">Total Annual Used</th>
+          <th class="center" style="width:90px">Total Sick</th>
+          <th class="center" style="width:100px">Total Unpaid</th>
+          <th class="center" style="width:70px">Entries</th>
+          <th class="center" style="width:80px">Action</th>
+        </tr>
+      </thead>
+      <tbody id="tbody">
+        {% for u in rows %}
+        <tr data-uid="{{ u.user_id }}"
+            data-name="{{ (u.full_name or '') | lower }}"
+            data-username="{{ (u.username or '') | lower }}">
+          <td class="muted">{{ u.user_id }}</td>
+          <td>{{ u.full_name or u.username or '—' }}</td>
+          {% if role == 1 %}
+          <td>
+            <span style="display:inline-block;padding:1px 7px;border-radius:4px;
+                         font-size:11px;font-weight:600;background:#ede9fe;
+                         color:#5b21b6;border:1px solid #ddd6fe;">
+              {{ u.department or '—' }}
+            </span>
+          </td>
+          {% endif %}
+          <td class="mono">{{ u.report_to or '—' }}</td>
+          <td class="center">{{ "%.1f" | format((u.total_annual or 0) | float) }}</td>
+          <td class="center muted">{{ "%.1f" | format((u.total_sick or 0) | float) }}</td>
+          <td class="center muted">{{ "%.1f" | format((u.total_unpaid or 0) | float) }}</td>
+          <td class="center">{{ u.total_entries or 0 }}</td>
+          <td class="center">
+            <a class="btn-view"
+               href="{{ url_for('leave.manager_leave_detail', target_user_id=u.user_id) }}">
+              👁 Xem
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <div class="no-results" id="nores">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="1.5" style="display:block;margin:0 auto 10px;">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        <line x1="8" y1="11" x2="14" y2="11"/>
+      </svg>
+      Không tìm thấy "<span id="qspan"></span>"
+    </div>
+    <div class="count" id="cnt"></div>
+  </div>
+
+  {# ════ TAB 2: Đơn chờ duyệt ════ #}
+  <div class="tab-panel" id="panel-pending">
+    {% if pending_entries %}
+    <table>
+      <thead>
+        <tr>
+          <th style="width:50px">ID</th>
+          <th>Nhân viên</th>
+          {% if role == 1 %}<th style="width:110px">Department</th>{% endif %}
+          <th style="width:95px">Từ ngày</th>
+          <th style="width:95px">Đến ngày</th>
+          <th style="width:100px">Loại nghỉ</th>
+          <th class="center" style="width:70px">Số ngày</th>
+          <th>Ghi chú</th>
+          <th class="center" style="width:150px">Thao tác</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for e in pending_entries %}
+        <tr id="row-{{ e.id }}">
+          <td class="muted">{{ e.id }}</td>
+          <td>
+            <div style="font-weight:500;">{{ e.full_name }}</div>
+            <div class="mono" style="font-size:11px;color:#999;">{{ e.username }}</div>
+          </td>
+          {% if role == 1 %}
+          <td>
+            <span style="display:inline-block;padding:1px 7px;border-radius:4px;
+                         font-size:11px;font-weight:600;background:#ede9fe;
+                         color:#5b21b6;border:1px solid #ddd6fe;">
+              {{ e.department or '—' }}
+            </span>
+          </td>
+          {% endif %}
+          <td>{{ e.date_from.strftime('%d/%m/%Y') if e.date_from else '—' }}</td>
+          <td>{{ e.date_to.strftime('%d/%m/%Y') if e.date_to else '—' }}</td>
+          <td><span class="status-badge status-pending">{{ e.leave_type or '—' }}</span></td>
+          <td class="center">
+            {{ "%.1f" | format(
+              ((e.annual_leave or 0) + (e.sick_leave or 0) + (e.maternity_leave or 0) +
+               (e.pregnancy_leave or 0) + (e.personal_leave or 0) +
+               (e.compensate_leave or 0) + (e.unpaid_leave or 0)) | float
+            ) }}
+          </td>
+          <td style="font-size:12px;color:#666;">{{ e.notes or '—' }}</td>
+          <td class="center">
+            {# Nút Duyệt #}
+            <form method="POST"
+                  action="{{ url_for('leave.manager_approve', entry_id=e.id) }}"
+                  style="display:inline;">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button type="submit" class="btn-approve">✅ Duyệt</button>
+            </form>
+            {# Nút Từ chối — mở modal #}
+            <button class="btn-reject"
+                    onclick="openReject({{ e.id }}, '{{ e.full_name }}')">
+              ✗ Từ chối
+            </button>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div style="text-align:center;padding:40px;color:#aaa;font-size:13px;">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5" style="display:block;margin:0 auto 12px;">
+        <path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/>
+      </svg>
+      Không có đơn nào chờ duyệt{% if role == 3 %} trong department <strong>{{ department }}</strong>{% endif %}
+    </div>
+    {% endif %}
+  </div>
+
+</div>
+
+{# ════ Reject Modal ════ #}
+<div class="modal-overlay" id="reject-modal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div class="modal-title">Từ chối đơn nghỉ</div>
+      <button class="modal-close" onclick="closeReject()">✕</button>
+    </div>
+    <form id="reject-form" method="POST" action="">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="modal-body">
+        <div style="font-size:13px;color:#555;margin-bottom:12px;">
+          Nhân viên: <strong id="reject-name"></strong>
+        </div>
+        <label>Lý do từ chối (không bắt buộc)</label>
+        <textarea name="note" placeholder="Nhập lý do từ chối..."></textarea>
+      </div>
+      <div class="modal-foot">
+        <button type="button" class="modal-cancel" onclick="closeReject()">Hủy</button>
+        <button type="submit" class="modal-submit">✗ Xác nhận từ chối</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

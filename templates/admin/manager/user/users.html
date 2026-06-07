@@ -1,0 +1,171 @@
+{% extends "admin/layout/base.html" %}
+
+{% block title %}Users manager{% endblock %}
+
+{% block content %}
+
+
+<div class="nts-wrap">
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Users Manager</h1>
+        </div>
+    </div>
+</div>
+  {# ── FILTER BAR ── #}
+  <form class="filter-bar" method="get" action="">
+    <div class="filter-field">
+      <label>NAME</label>
+      <input type="text" name="name" placeholder="Type Name for Searching" value="{{ name }}">
+    </div>
+
+     <div class="filter-field">
+        <label>ROLE</label>
+        <select name="role">
+            <option value="">All Roles</option>
+            {% for item in all_role %}
+                <option
+                    value="{{ item.RoleId }}"
+                    {% if role|int == item.RoleId %}selected{% endif %}
+                >
+                    {{ item.Rolename }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="filter-field">
+        <label>DEPARTMENT</label>
+        <select name="dpm">
+            <option value="">All Departments</option>
+            {% for item in all_dpm %}
+                <option
+                    value="{{ item.id }}"
+                    {% if dpm|int == item.id %}selected{% endif %}
+                >
+                    {{ item.name }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="filter-field">
+        <label>STATUS</label>
+        <select name="status">
+            <option value="">All Status</option>
+            <option value="1" {% if status == '1' %}selected{% endif %}>
+                Active
+            </option>
+            <option value="0" {% if status == '0' %}selected{% endif %}>
+                Inactive
+            </option>
+        </select>
+    </div>
+
+    <button type="submit" class="btn-search"><i class="bi bi-search"></i> Search</button>
+    <a href="{{ url_for('user_manager.user_mng_page') }}" class="btn-reset">
+        <i class="bi bi-x-circle"></i> Reset
+    </a>
+
+    <button type="button" class="btn-create"
+            data-crud-open
+            data-module="users"
+            data-id="create"
+            data-title="Create User">
+        <i class="bi bi-plus-circle"></i>
+        Create User
+    </button>
+
+    <div class="records-badge">
+      Records<br><span>{{ "{:,}".format(total) }}</span>
+    </div>
+  </form>
+
+  {# ── MAIN TABLE ── #}
+  <div class="table-wrap">
+    <table class="nts-table user-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>USERNAME</th>
+          <th>FULLNAME</th>
+          <th>JOB</th>
+          <th>ROLE</th>
+          <th>DEPARTMENT</th>
+          <th>STATUS</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for user in users %}
+
+        <tr class="route-row"
+            data-crud-open
+            data-module="users"
+            data-id="{{ user.Id }}"
+            data-title="Edit Users - {{ user.Username }}">
+
+            <td class="td-num">
+                {{ user.Id }}
+            </td>
+
+            <td class="td-name">
+                {{ user.Username }}
+            </td>
+
+            <td class="td-name">
+                {{ user.FullName }}
+            </td>
+
+            <td class="td-name">
+                {{ user.Job_title }}
+            </td>
+
+            <td class="td-name">
+                {{ user.Rolename }}
+            </td>
+
+            <td class="td-name">
+                {{ user.dpm_name }}
+            </td>
+
+            <td class="td-status">
+                {% if user.Status|int == 1 %}
+                    <span class="status-badge active">
+                        Active
+                    </span>
+                {% else %}
+                    <span class="status-badge inactive">
+                        Inactive
+                    </span>
+                {% endif %}
+            </td>
+
+        </tr>
+
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {# ── PAGINATION ── #}
+  <div class="pagination">
+    <span class="page-info">{{ (page-1)*10+1 }} – {{ [page*10, total]|min }} / {{ "{:,}".format(total) }}</span>
+    {% if page > 1 %}
+      <a href="?{{ request.query_string.decode() | replace('page='+page|string, 'page='+(page-1)|string) if 'page=' in request.query_string.decode() else request.query_string.decode() + '&page=' + (page-1)|string }}" class="page-btn"><i class="bi bi-chevron-left"></i></a>
+    {% else %}
+      <span class="page-btn disabled"><i class="bi bi-chevron-left"></i></span>
+    {% endif %}
+      <span class="page-current">
+        {{ page }} / {{ total_pages }}
+    </span>
+    {% if page < total_pages %}
+      <a href="?{{ request.query_string.decode() | replace('page='+page|string, 'page='+(page+1)|string) if 'page=' in request.query_string.decode() else request.query_string.decode() + '&page=' + (page+1)|string }}" class="page-btn"><i class="bi bi-chevron-right"></i></a>
+    {% else %}
+      <span class="page-btn disabled"><i class="bi bi-chevron-right"></i></span>
+    {% endif %}
+  </div>
+
+</div>
+
+{% endblock %}
+

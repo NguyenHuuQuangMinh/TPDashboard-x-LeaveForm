@@ -1,10 +1,25 @@
+{% include "partials/slidebar.html" %}
 <header class="header">
 
     <!-- LEFT: MENU BUTTON -->
     <div class="header-left">
-        <button class="menu-toggle" onclick="toggleSidebar()">
-            ☰
-        </button>
+        <div class="page-indicator">
+
+            <div class="page-indicator-label">
+                {% if session.get('is_admin') == 1%}
+                ADMIN PANEL
+                {% else %}
+                TOI
+                {% endif %}
+            </div>
+
+            <div class="page-indicator-current">
+
+                /
+                {{ get_route_name(request.endpoint, sidebar_routes) or request.endpoint}}
+            </div>
+
+        </div>
     </div>
 
     <!-- RIGHT: USER INFO -->
@@ -25,7 +40,7 @@
                     {{ session.get('job', 'Employee') }}
                 </div>
             </div>
-            {% include "partials/Dropdown/drop_down.html" %}
+            {% include "partials/drop_down.html" %}
 
         </div>
 

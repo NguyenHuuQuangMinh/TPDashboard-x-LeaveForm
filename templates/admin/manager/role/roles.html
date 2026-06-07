@@ -1,0 +1,124 @@
+{% extends "admin/layout/base.html" %}
+
+{% block title %}Roles manager{% endblock %}
+
+{% block content %}
+
+
+<div class="nts-wrap">
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Roles Manager</h1>
+        </div>
+    </div>
+</div>
+  {# ── FILTER BAR ── #}
+  <form class="filter-bar" method="get" action="">
+    <div class="filter-field">
+      <label>NAME</label>
+      <input type="text" name="name" placeholder="Type Name for Searching" value="{{ name }}">
+    </div>
+
+    <div class="filter-field">
+        <label>Status</label>
+        <select name="status">
+            <option value="" {% if not status %}selected{% endif %}>All</option>
+            <option value="1"
+                {% if status == 1 %}selected{% endif %}>
+                Active
+            </option>
+            <option value="0"
+                {% if status == 0 %}selected{% endif %}>
+                Inactive
+            </option>
+        </select>
+    </div>
+
+    <button type="submit" class="btn-search"><i class="bi bi-search"></i> Search</button>
+    <a href="{{ url_for('role.role_page') }}" class="btn-reset">
+        <i class="bi bi-x-circle"></i> Reset
+    </a>
+
+    <button type="button" class="btn-create"
+            data-crud-open
+            data-module="roles"
+            data-id="create"
+            data-title="Create Role">
+        <i class="bi bi-plus-circle"></i>
+        Create Role
+    </button>
+
+    <div class="records-badge">
+      Records<br><span>{{ "{:,}".format(total) }}</span>
+    </div>
+  </form>
+
+  {# ── MAIN TABLE ── #}
+  <div class="table-wrap">
+    <table class="nts-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>NAME</th>
+          <th>STATUS</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for role in roles %}
+        {% set i = loop.index + (page-1)*10 %}
+
+        <tr class="route-row"
+            data-crud-open
+            data-module="roles"
+            data-id="{{ role.RoleId }}"
+            data-title="Edit Role - {{ role.Rolename }}">
+
+            <td class="td-num">
+                {{ i }}
+            </td>
+
+            <td class="td-name">
+                {{ role.Rolename }}
+            </td>
+
+            <td class="td-status">
+                {% if role.Status|int == 1 %}
+                    <span class="status-badge active">
+                        Active
+                    </span>
+                {% else %}
+                    <span class="status-badge inactive">
+                        Inactive
+                    </span>
+                {% endif %}
+            </td>
+
+        </tr>
+
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {# ── PAGINATION ── #}
+  <div class="pagination">
+    <span class="page-info">{{ (page-1)*10+1 }} – {{ [page*10, total]|min }} / {{ "{:,}".format(total) }}</span>
+    {% if page > 1 %}
+      <a href="?{{ request.query_string.decode() | replace('page='+page|string, 'page='+(page-1)|string) if 'page=' in request.query_string.decode() else request.query_string.decode() + '&page=' + (page-1)|string }}" class="page-btn"><i class="bi bi-chevron-left"></i></a>
+    {% else %}
+      <span class="page-btn disabled"><i class="bi bi-chevron-left"></i></span>
+    {% endif %}
+      <span class="page-current">
+        {{ page }} / {{ total_pages }}
+    </span>
+    {% if page < total_pages %}
+      <a href="?{{ request.query_string.decode() | replace('page='+page|string, 'page='+(page+1)|string) if 'page=' in request.query_string.decode() else request.query_string.decode() + '&page=' + (page+1)|string }}" class="page-btn"><i class="bi bi-chevron-right"></i></a>
+    {% else %}
+      <span class="page-btn disabled"><i class="bi bi-chevron-right"></i></span>
+    {% endif %}
+  </div>
+
+</div>
+
+{% endblock %}
+

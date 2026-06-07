@@ -1,9 +1,178 @@
 {% extends "admin/layout/base.html" %}
 
-{% block title %}Admin Dashboard{% endblock %}
+{% block title %}NTS Dashboard{% endblock %}
 
 {% block content %}
 
-    <h1>DASHBOARD ADMIN</h1>
+
+<div class="nts-wrap">
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">NTS Dashboard</h1>
+        </div>
+    </div>
+
+    <div class="dashboard-charts">
+        <div class="chart-card">
+            <div class="chart-head">
+
+                <div class="chart-title">
+                    Revenue By Quarter
+                </div>
+
+                <select id="chartYearFilter" class="chart-year-filter">
+                    <option value="">All Years</option>
+                    <option value="2025">2025</option>
+                    <option value="2026">2026</option>
+                    <option value="2027">2027</option>
+                </select>
+
+            </div>
+            <div class="chart-canvas">
+                <canvas id="quarterPieChart"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-card">
+
+        <div class="chart-head">
+
+            <div class="chart-title">
+                Monthly Revenue Trend
+            </div>
+
+            <select id="trendYearFilter" class="chart-year-filter">
+                    <option value="">All Years</option>
+                    <option value="2025">2025</option>
+                    <option value="2026">2026</option>
+                    <option value="2027">2027</option>
+                </select>
+        </div>
+        <div class="chart-canvas">
+            <canvas id="monthlyTrendChart"></canvas>
+        </div>
+    </div>
+
+        <div class="chart-card">
+
+        <div class="chart-head">
+
+            <div class="chart-title">
+                Top Revenue Agents
+            </div>
+            <select id="agentYearFilter" class="chart-year-filter">
+                    <option value="">All Years</option>
+                    <option value="2025">2025</option>
+                    <option value="2026">2026</option>
+                    <option value="2027">2027</option>
+                </select>
+        </div>
+        <div class="chart-canvas">
+            <canvas id="topAgentsChart"></canvas>
+        </div>
+
+    </div>
+    </div>
+
+
+
+</div>
+  {# ── FILTER BAR ── #}
+  <form class="filter-bar" method="get" action="">
+    <div class="filter-fields">
+        <div class="filter-field">
+          <label>CODE</label>
+          <input type="text" name="code" placeholder="Nhập giá trị" value="{{ filters.code }}">
+        </div>
+        <div class="filter-field">
+          <label>NAME</label>
+          <input type="text" name="name" placeholder="Type Name for Searching" value="{{ filters.name }}">
+        </div>
+        <div class="filter-field">
+          <label>CATEGORY</label>
+          <select name="category">
+            <option value="">All</option>
+            {% for cat in categories %}
+              <option value="{{ cat }}" {% if filters.category == cat %}selected{% endif %}>{{ cat }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="filter-field">
+          <label>TRADESHOW / KEYWORD</label>
+          <input type="text" name="tradeshow" placeholder="Tìm trong message..." value="{{ filters.tradeshow }}">
+        </div>
+    </div>
+
+    <div class="filter-actions">
+        <button type="submit" class="btn-search"><i class="bi bi-search"></i> Search</button>
+        <a href="{{ url_for('admin.dashboard') }}" class="btn-reset"><i class="bi bi-x-circle"></i> Reset</a>
+
+        <a href="https://webconnect.trailsofindochina.com/ReportServer/Pages/ReportViewer.aspx?%2fSales+Team%2fRETAIL+TEAM%2f01.+Revenue+by+Agent_RT+ONLY&rs:Command=Render"
+           target="_blank"
+           class="btn-report">
+          <i class="bi bi-bar-chart-line"></i> Revenue Report
+        </a>
+        <div class="records-badge">Records<br><span>{{ "{:,}".format(total) }}</span>
+    </div>
+    </div>
+
+
+  </form>
+
+  <div class="nts-hint">
+    {% for i in nts_detail%}
+      <span>
+         <strong>{{ i.note_category }}</strong>: {{ i.description }}
+      </span>
+    {% endfor %}
+  </div>
+
+  {# ── MAIN TABLE ── #}
+  <div class="table-wrap">
+    <table class="nts-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>CODE</th>
+          <th>NAME ↑</th>
+          <th>MESSAGE TEXT</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for msg in messages %}
+{% set i = loop.index + (page-1)*100 %}
+        <tr class="msg-row" data-code="{{ msg.code }}">
+          <td class="td-num">{{ i }}</td>
+          <td class="td-code">{{ msg.code }}</td>
+          <td class="td-name">{{ msg.name }}</td>
+          <td class="td-msg" data-code="{{ msg.code }}" data-message="{{ msg.message_text|e }}">
+            <div class="msg-preview">{{ msg.message_text | striptags | truncate(200) }}</div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {# ── PAGINATION ── #}
+  <div class="pagination">
+    <span class="page-info">{{ (page-1)*100+1 }} – {{ [page*100, total]|min }} / {{ "{:,}".format(total) }}</span>
+    {% if page > 1 %}
+      <a href="?{{ request.query_string.decode() | replace('page='+page|string, 'page='+(page-1)|string) if 'page=' in request.query_string.decode() else request.query_string.decode() + '&page=' + (page-1)|string }}" class="page-btn"><i class="bi bi-chevron-left"></i></a>
+    {% else %}
+      <span class="page-btn disabled"><i class="bi bi-chevron-left"></i></span>
+    {% endif %}
+      <span class="page-current">
+        {{ page }} / {{ total_pages }}
+    </span>
+    {% if page < total_pages %}
+      <a href="?{{ request.query_string.decode() | replace('page='+page|string, 'page='+(page+1)|string) if 'page=' in request.query_string.decode() else request.query_string.decode() + '&page=' + (page+1)|string }}" class="page-btn"><i class="bi bi-chevron-right"></i></a>
+    {% else %}
+      <span class="page-btn disabled"><i class="bi bi-chevron-right"></i></span>
+    {% endif %}
+  </div>
+
+</div>
 
 {% endblock %}
+

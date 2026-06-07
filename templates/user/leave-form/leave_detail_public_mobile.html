@@ -1,0 +1,303 @@
+{% extends "user/leave-form/layout/base.html" %}
+
+{% block title %}Leave Record{% endblock %}
+
+{% block content %}
+
+{# ── Top bar (sticky search + export) ── #}
+<div class="mob-topbar">
+  <div class="mob-search-row">
+    <label><i class="bi bi-person-badge"></i> ID:</label>
+    <input type="number" id="emp-id-input"
+           placeholder="Employee ID…" min="1"
+           value="{{ uid if uid is defined else '' }}">
+    <button onclick="goToLeave()">
+      <i class="bi bi-arrow-right-circle"></i> View
+    </button>
+  </div>
+  {% if error is defined and error %}
+  <div class="error-msg"><i class="bi bi-exclamation-circle"></i> {{ error }}</div>
+  {% endif %}
+
+  {% if meta is defined and meta %}
+  <div class="mob-export-row">
+    <button class="btn-excel" onclick="downloadExcel()">
+      <i class="bi bi-file-earmark-excel"></i> Excel
+    </button>
+    <button class="btn-pdf" onclick="downloadPDF()">
+      <i class="bi bi-file-earmark-pdf"></i> PDF
+    </button>
+    <button class="btn-print" onclick="window.print()">
+      <i class="bi bi-printer"></i> Print
+    </button>
+  </div>
+  {% endif %}
+</div>
+
+{% if meta is defined and meta %}
+
+{% set total_avail = (meta.carry_over or 0)|float + (meta.entitle_contract or 0)|float %}
+{% set al_used     = entries|sum(attribute='annual_leave') %}
+{% set remaining   = total_avail - al_used %}
+
+<div class="mob-wrap">
+
+  {# ── Employee info card ── #}
+  <div class="mob-card">
+    <div class="mob-card-head">
+      <img src="{{ url_for('static', filename='picture/Logo.png') }}" alt="Logo">
+      <div class="mob-card-head-text">
+        <h1>Individual Leave Record</h1>
+        <p>Human Resources — Annual Tracking Form</p>
+      </div>
+      <div class="mob-head-ref">TOI-AHR-LR-F01/NOV15</div>
+    </div>
+
+    <div class="mob-info">
+      <div class="mob-info-grid">
+        <div class="mob-field">
+          <label>Full Name</label>
+          <span>{{ meta.full_name or '—' }}</span>
+        </div>
+        <div class="mob-field">
+          <label>Year</label>
+          <span>2026</span>
+        </div>
+        <div class="mob-field">
+          <label>Job Title</label>
+          <span>{{ meta.job_title or '—' }}</span>
+        </div>
+        <div class="mob-field">
+          <label>Department</label>
+          <span>{{ meta.department or '—' }}</span>
+        </div>
+        <div class="mob-field">
+          <label>Location</label>
+          <span>{{ meta.working_location or '—' }}</span>
+        </div>
+        <div class="mob-field">
+          <label>Reports To</label>
+          <span>{{ meta.report_to or '—' }}</span>
+        </div>
+        <div class="mob-field">
+          <label>Joining Date</label>
+          <span>{{ meta.joining_date or '—' }}</span>
+        </div>
+      </div>
+      <p class="mob-note">* Max carry over: 3 days — cleared before 1st May</p>
+    </div>
+
+    {# ── Balance ── #}
+    <div class="mob-balance">
+      <h3>Annual Leave Balance</h3>
+      <div class="mob-balance-grid">
+        <div class="mob-bc">
+          <div class="mob-bc-val">{{ meta.carry_over or 0 }}</div>
+          <div class="mob-bc-label">Carry Over</div>
+        </div>
+        <div class="mob-bc">
+          <div class="mob-bc-val">{{ meta.entitle_contract or 0 }}</div>
+          <div class="mob-bc-label">Contracted</div>
+        </div>
+        <div class="mob-bc">
+          <div class="mob-bc-val">{{ total_avail }}</div>
+          <div class="mob-bc-label">Total Available</div>
+        </div>
+        <div class="mob-bc bc-used">
+          <div class="mob-bc-val" id="al-used-val">{{ al_used }}</div>
+          <div class="mob-bc-label">AL Used</div>
+        </div>
+        <div class="mob-bc bc-ok" style="grid-column: span 2;">
+          <div class="mob-bc-val" id="remaining-val">{{ remaining }}</div>
+          <div class="mob-bc-label">Remaining</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {# ── Leave entry cards ── #}
+  <div class="mob-entries">
+    <div class="mob-entries-head">
+      <span>Leave Entries</span>
+      <span style="font-size:10px;color:#888;font-weight:400;">Tap to select a row</span>
+    </div>
+
+    <div id="leave-entries-list">
+      {% for e in entries %}
+      <div class="mob-entry-card status-{{ e.status or 'pending' }}"
+           data-id="{{ e.id }}"
+           data-leave-type="{{ e.leave_type or '' }}"
+           data-saved="true"
+           onclick="selectEntry(this)">
+
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
+          <span style="font-size:11px;color:#aaa;font-weight:700;">#{{ loop.index }}</span>
+          <span class="mob-status s-{{ e.status or 'pending' }}">
+            {% if e.status == 'approved' %}✓ Approved
+            {% elif e.status == 'rejected' %}✗ Rejected
+            {% else %}⏳ Pending{% endif %}
+          </span>
+        </div>
+
+        {# Date From ── #}
+        <div class="mob-ef">
+          <div class="mob-ef-label">Date From</div>
+          <input type="date"
+                 class="mob-inp-date"
+                 id="date-from-{{ e.id }}"
+                 value="{{ e.date_from.strftime('%Y-%m-%d') if e.date_from else '' }}"
+                 {% if e.status == 'approved' %}readonly{% endif %}>
+        </div>
+
+        {# Date To ── #}
+        <div class="mob-ef">
+          <div class="mob-ef-label">Date To</div>
+          <input type="date"
+                 class="mob-inp-date"
+                 id="date-to-{{ e.id }}"
+                 value="{{ e.date_to.strftime('%Y-%m-%d') if e.date_to else '' }}"
+                 {% if e.status == 'approved' %}readonly{% endif %}>
+        </div>
+
+        {# Leave Type ── #}
+        <div class="mob-ef">
+          <div class="mob-ef-label">Leave Type</div>
+          {% if e.status == 'approved' %}
+            <span style="font-size:12px;font-weight:500;">
+              {% if e.leave_type == 'annual_carry' %}AL — Annual Leave (Carry Over)
+              {% elif e.leave_type == 'annual' %}AL — Annual Leave (Advanced)
+              {% elif e.leave_type == 'sick' %}SL — Sick Leave
+              {% elif e.leave_type == 'maternity' %}Me L — Maternity Leave
+              {% elif e.leave_type == 'marriage' %}Ma L — Marriage Leave
+              {% elif e.leave_type == 'paternity' %}Pa L — Paternity Leave
+              {% elif e.leave_type == 'personal' %}Per L — Personal Leave
+              {% elif e.leave_type == 'compensate' %}Co L — Compensatory Leave
+              {% elif e.leave_type == 'unpaid' %}Un L — Unpaid Leave
+              {% else %}—{% endif %}
+            </span>
+          {% else %}
+            <select class="mob-inp-select leave-type-sel" id="leave-type-{{ e.id }}"
+                    onchange="this.closest('.mob-entry-card').dataset.leaveType=this.value; updateBalance();">
+              <option value="">— select type —</option>
+              <option value="annual_carry" {% if e.leave_type == 'annual_carry' %}selected{% endif %}>AL — Annual Leave (Carry Over)</option>
+              <option value="annual"       {% if e.leave_type == 'annual' %}selected{% endif %}>AL — Annual Leave (Advanced)</option>
+              <option value="sick"         {% if e.leave_type == 'sick' %}selected{% endif %}>SL — Sick Leave</option>
+              <option value="maternity"    {% if e.leave_type == 'maternity' %}selected{% endif %}>Me L — Maternity Leave</option>
+              <option value="marriage"     {% if e.leave_type == 'marriage' %}selected{% endif %}>Ma L — Marriage Leave</option>
+              <option value="paternity"    {% if e.leave_type == 'paternity' %}selected{% endif %}>Pa L — Paternity Leave</option>
+              <option value="personal"     {% if e.leave_type == 'personal' %}selected{% endif %}>Per L — Personal Leave</option>
+              <option value="compensate"   {% if e.leave_type == 'compensate' %}selected{% endif %}>Co L — Compensatory Leave</option>
+              <option value="unpaid"       {% if e.leave_type == 'unpaid' %}selected{% endif %}>Un L — Unpaid Leave</option>
+            </select>
+          {% endif %}
+        </div>
+
+        {# Days ── #}
+        <div class="mob-ef">
+          <div class="mob-ef-label">Days</div>
+          <input type="number" min="0" step="0.5"
+                 class="mob-inp-days days-input"
+                 id="days-{{ e.id }}"
+                 value="{{ e.annual_leave or e.sick_leave or e.maternity_leave or
+                           e.pregnancy_leave or e.personal_leave or e.compensate_leave or
+                           e.unpaid_leave or 0 }}"
+                 {% if e.status == 'approved' %}readonly{% endif %}>
+        </div>
+
+        {# Notes ── #}
+        <div class="mob-ef">
+          <div class="mob-ef-label">Notes</div>
+          <textarea class="mob-inp-notes"
+                    id="notes-{{ e.id }}"
+                    placeholder="Add note…"
+                    rows="1"
+                    {% if e.status == 'approved' %}readonly{% endif %}>{{ e.notes or '' }}</textarea>
+        </div>
+
+        {# Signature ── #}
+        <div class="mob-ef">
+          <div class="mob-ef-label">Applicant Signature</div>
+          {% if e.applicant_signed %}
+            <div class="mob-sig-display">
+              <img src="{{ e.applicant_signed }}" alt="Signed">
+            </div>
+          {% elif e.status != 'approved' %}
+            <button type="button" class="mob-btn-sign"
+                    data-entry="{{ e.id }}" data-role="applicant"
+                    onclick="event.stopPropagation(); openSigModal('{{ e.id }}', {{ loop.index }})">
+              <i class="bi bi-pen"></i> Tap to Sign
+            </button>
+            <input type="hidden" id="applicant-sig-{{ e.id }}" value="">
+          {% else %}
+            <span style="color:#aaa;font-size:12px;font-style:italic;">—</span>
+          {% endif %}
+        </div>
+
+      </div>
+      {% endfor %}
+    </div>
+
+    {# ── Summary footer ── #}
+    <div class="mob-summary">
+      <div class="mob-summary-item">
+        <label>Total Days Used</label>
+        <span id="total-days">{{ al_used }}</span>
+      </div>
+      <div class="mob-summary-item">
+        <label>AL Balance</label>
+        <span id="tfoot-balance" class="{% if remaining < 0 %}neg{% endif %}">{{ remaining }}</span>
+      </div>
+    </div>
+  </div>
+
+</div>{# /mob-wrap #}
+<div id="leave-data"
+     data-total-avail="{{ total_avail }}"
+     data-carry-over="{{ meta.carry_over or 0 }}"
+     data-entitle-contract="{{ meta.entitle_contract or 0 }}">
+</div>
+{# ── Hidden inputs for JS ── #}
+<input type="hidden" id="csrf-token" value="{{ csrf_token() }}">
+<input type="hidden" id="current-uid" value="{{ uid }}">
+
+{# ── Sticky bottom toolbar ── #}
+<div class="mob-toolbar">
+  <button class="mob-btn-add" onclick="addEntry()">
+    <i class="bi bi-plus-lg"></i> Add
+  </button>
+  <button class="mob-btn-delete" onclick="deleteEntry()">
+    <i class="bi bi-trash"></i> Delete
+  </button>
+  <button class="mob-btn-submit" onclick="submitAll()">
+    <i class="bi bi-floppy"></i> Submit
+  </button>
+</div>
+
+{# ── Signature modal (bottom sheet) ── #}
+<div id="sig-modal" class="sig-modal-overlay" style="display:none">
+  <div class="sig-modal-box">
+    <div class="sig-modal-head">
+      <div>
+        <div class="sig-modal-title" id="sig-modal-title">Applicant Signature — Row 1</div>
+        <div class="sig-modal-subtitle">Draw your signature using your finger</div>
+      </div>
+      <button type="button" class="sig-modal-close" onclick="closeSigModal()">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+    <div class="sig-modal-body">
+      <canvas id="sig-canvas"></canvas>
+    </div>
+    <div class="sig-modal-foot">
+      <button type="button" class="sig-btn-cancel" onclick="closeSigModal()">Cancel</button>
+      <button type="button" class="sig-btn-clear"  onclick="clearSigCanvas()">Clear</button>
+      <button type="button" class="sig-btn-confirm" onclick="confirmSig()">
+        <i class="bi bi-check-lg"></i> Confirm
+      </button>
+    </div>
+  </div>
+</div>
+
+{% endif %}{# end if meta #}
+
+{% endblock %}
