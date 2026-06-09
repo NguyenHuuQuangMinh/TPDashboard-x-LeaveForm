@@ -18,6 +18,7 @@
     <span class="error-msg"><i class="bi bi-exclamation-circle"></i> {{ error }}</span>
     {% endif %}
   </div>
+
   {% if meta is defined and meta %}
   <div class="topbar-export">
     <button onclick="downloadExcel()"
@@ -42,20 +43,20 @@
 {% set al_used     = entries|sum(attribute='annual_leave') %}
 {% set remaining   = total_avail - al_used %}
 
-<div id="leave-data"
-     data-total-avail="{{ total_avail }}"
-     data-carry-over="{{ meta.carry_over or 0 }}"
-     data-entitle-contract="{{ meta.entitle_contract or 0 }}">
-</div>
-
-  <div id="employee-meta"
+<div id="employee-meta"
          data-full-name="{{ meta.full_name or '' }}"
          data-job-title="{{ meta.job_title or '' }}"
          data-department="{{ meta.department or '' }}"
          data-working-location="{{ meta.working_location or '' }}"
          data-report-to="{{ meta.report_to or '' }}"
          data-joining-date="{{ meta.joining_date or '' }}">
-    </div>
+</div>
+
+<div id="leave-data"
+     data-total-avail="{{ total_avail }}"
+     data-carry-over="{{ meta.carry_over or 0 }}"
+     data-entitle-contract="{{ meta.entitle_contract or 0 }}">
+</div>
 
 <div class="ilr-wrap">
   <div class="ilr-card">
