@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask,session
 import os
 from flask_wtf import CSRFProtect
 from flask_wtf.csrf import generate_csrf
@@ -10,9 +10,10 @@ def base_app():
     csrf.init_app(app)
     @app.context_processor
     def inject_global_data():
+        role_id = session.get("role")
         return {
             "csrf_token": generate_csrf,
-            "sidebar_routes": Routes.get_sidebar_routes()
+            "sidebar_routes": Routes.get_sidebar_routes(role_id)
         }
 
     @app.context_processor

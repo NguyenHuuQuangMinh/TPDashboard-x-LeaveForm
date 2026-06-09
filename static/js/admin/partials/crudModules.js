@@ -15,6 +15,15 @@ export async function initModuleFeatures(module) {
                 await import('../user_mng/auto_field.js');
 
             m.initAutoField();
+        },
+        permissions: async () => {
+
+            const m =
+                await import(
+                    '../roles_permission/permission.js'
+                );
+
+            m.initPermissionForm();
         }
     };
 

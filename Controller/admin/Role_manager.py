@@ -118,5 +118,50 @@ def create_role():
 
     return redirect(url_for('role.role_page'))
 
+@role_bp.route("/partial/permissions/<int:role_id>")
+def permission_partial(role_id):
+
+    routes = Roles.get_all_routes_permissions()
+
+    selected = Roles.get_role_permissions(role_id)
+
+    return render_template(
+        "admin/manager/role/permission_form.html",
+        admin_routes=routes["admin_routes"],
+        user_routes=routes["user_routes"],
+        selected=selected,
+        role_id=role_id
+    )
+
+@role_bp.route(
+    "/permissions/save",
+    methods=["POST"]
+)
+def save_permissions():
+
+    role_id = request.form.get("role_id")
+
+    route_ids = request.form.getlist(
+        "route_ids"
+    )
+    print("FORM:", request.form)
+    print("ROLE_ID:", request.form.get("role_id"))
+    print("ROUTE_IDS:", request.form.getlist("route_ids"))
+    result = Roles.save_role_permissions(
+        role_id,
+        route_ids
+    )
+
+    if result["ok"]:
+        return jsonify({
+            "ok": True,
+            "message": "Permissions updated successfully."
+        })
+
+    return jsonify({
+        "ok": False,
+        "error": result["error"]
+    }), 500
+
 
 

@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 2200);
 });
 
-export function showToast(
+function showToast(
     message,
     category = 'success'
 ) {

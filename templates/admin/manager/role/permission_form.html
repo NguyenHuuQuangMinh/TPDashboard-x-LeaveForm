@@ -1,0 +1,93 @@
+<form id="permissionForm">
+
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input
+        type="hidden"
+        name="role_id"
+        value="{{ role_id }}"
+    >
+
+    <div class="permission-wrapper">
+        <div class="permission-grid">
+            <div class="permission-group">
+
+                <div class="permission-title">
+                    <i class="bi bi-shield-lock"></i>
+                    Admin Functions
+                </div>
+
+                <div class="permission-list">
+
+                    {% for route in admin_routes %}
+
+                    <label class="permission-item">
+
+                        <input
+                            type="checkbox"
+                            name="route_ids"
+                            value="{{ route.id }}"
+                            {% if route.id in selected %}
+                                checked
+                            {% endif %}
+                        >
+
+                        <span>
+                            {{ route.name }}
+                        </span>
+
+                    </label>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+            <div class="permission-group">
+
+                <div class="permission-title">
+                    <i class="bi bi-person"></i>
+                    User Functions
+                </div>
+
+                <div class="permission-list">
+
+                    {% for route in user_routes %}
+
+                    <label class="permission-item">
+
+                        <input
+                            type="checkbox"
+                            name="route_ids"
+                            value="{{ route.id }}"
+                            {% if route.id in selected %}
+                                checked
+                            {% endif %}
+                        >
+
+                        <span>
+                            {{ route.name }}
+                        </span>
+
+                    </label>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="permission-footer">
+
+        <button
+            type="submit"
+            class="btn-save"
+        >
+            Save Permissions
+        </button>
+
+    </div>
+
+</form>

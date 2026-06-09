@@ -271,9 +271,6 @@
     text-align: center;
 }
 
-.nts-table td:nth-child(4) {
-    text-align: left;
-}
 
 .td-num {
   color: #555577;

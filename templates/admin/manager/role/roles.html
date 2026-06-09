@@ -61,6 +61,7 @@
           <th>ID</th>
           <th>NAME</th>
           <th>STATUS</th>
+          <th>ACTION</th>
         </tr>
       </thead>
       <tbody>
@@ -93,6 +94,20 @@
                 {% endif %}
             </td>
 
+            <td class="td-action">
+
+                <button
+                    class="btn-permission"
+                    data-crud-open
+                    data-module="permissions"
+                    data-id="{{ role.RoleId }}"
+                    data-title="Permissions - {{ role.Rolename }}"
+                >
+                    <i class="bi bi-shield-lock"></i>
+                    Permissions
+                </button>
+
+            </td>
         </tr>
 
         {% endfor %}

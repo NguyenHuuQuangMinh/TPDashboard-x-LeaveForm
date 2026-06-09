@@ -52,23 +52,32 @@ class Routes:
         return routes, total
 
     @staticmethod
-    def get_sidebar_routes():
+    def get_sidebar_routes(role_id):
         sql = text("""
             SELECT
-                id,
-                name,
-                path,
-                icon,
-                parent_id,
-                sort_order,
-                window_type
-            FROM system_routes
-            WHERE is_active = true
-            ORDER BY parent_id, sort_order
+                r.id,
+                r.name,
+                r.path,
+                r.icon,
+                r.parent_id,
+                r.sort_order,
+                r.window_type
+            FROM system_routes r
+            INNER JOIN role_route_permissions rp
+                ON rp.route_id = r.id
+            WHERE
+                r.is_active = true
+                AND rp.role_id = :role_id
+                AND rp.can_view = true
+            ORDER BY r.parent_id, r.sort_order
         """)
 
         with engine.connect() as conn:
-            routes = conn.execute(sql).mappings().all()
+            routes = conn.execute(
+                sql,
+                {"role_id": role_id}
+            ).mappings().all()
+
         return routes
 
     @staticmethod
