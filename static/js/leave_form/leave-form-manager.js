@@ -3,10 +3,10 @@ var SAVE_ROW_URL        = "/leave/save-row";
 var ADD_ROW_URL         = "/leave/add";
 var DELETE_ROW_BASE_URL = "/leave/delete/";
 const CARRY_OVER =
-    leaveData.dataset.carryOver || 0;
+    parseFloat(leaveData.dataset.carryOver) || 0;
 
 const ENTITLE_CONTRACT =
-    leaveData.dataset.entitleContract || 0;
+    parseFloat(leaveData.dataset.entitleContract) || 0;
 
 const TOTAL_AVAIL =
     parseFloat(leaveData.dataset.totalAvail || 0);
@@ -172,8 +172,8 @@ function addRow(){
   fd.append('date_from',new Date().toISOString().slice(0,10));
   fd.append('date_to',new Date().toISOString().slice(0,10));
   fd.append('notes','');
-  fd.append('carry_over','{{ meta.carry_over or 0 }}');
-  fd.append('entitle_contract','{{ meta.entitle_contract or 0 }}');
+  fd.append('carry_over', CARRY_OVER);
+  fd.append('entitle_contract', ENTITLE_CONTRACT);
   fetch(ADD_ROW_URL,{method:'POST',body:fd}).then(r=>r.json()).then(d=>{
     if(!d.ok){alert('Không thêm được dòng: '+(d.error||''));return;}
     const id=d.id,tbody=document.getElementById('leave-tbody');

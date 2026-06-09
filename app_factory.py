@@ -23,4 +23,10 @@ def base_app():
                 None
             )
         }
+
+    app.config.update(
+        SESSION_COOKIE_HTTPONLY=True,
+        SESSION_COOKIE_SECURE=False,
+        SESSION_COOKIE_SAMESITE='Lax'
+    )
     return app

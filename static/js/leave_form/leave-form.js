@@ -5,10 +5,10 @@ var SAVE_ROW_URL        = "/leave/save-row";
 var ADD_ROW_URL         = "/leave/add";
 var DELETE_ROW_BASE_URL = "/leave/delete/";
 const CARRY_OVER =
-    leaveData.dataset.carryOver || 0;
+    parseFloat(leaveData.dataset.carryOver) || 0;
 
 const ENTITLE_CONTRACT =
-    leaveData.dataset.entitleContract || 0;
+    parseFloat(leaveData.dataset.entitleContract) || 0;
 
 const TOTAL_AVAIL =
     parseFloat(leaveData.dataset.totalAvail || 0);
