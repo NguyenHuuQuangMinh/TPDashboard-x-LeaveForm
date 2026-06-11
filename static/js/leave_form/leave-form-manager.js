@@ -105,7 +105,7 @@ function downloadPDF() {
   el.style.paddingBottom='40px';
   var opt={
     margin:[8,8,14,8],
-    filename:'MyLeaveRecord_{{ meta.full_name or "Employee" }}_2026.pdf'.replace(/\s+/g,'_'),
+    filename:('MyLeaveRecord_' + (FULL_NAME || 'Employee') + '_2026.pdf').replace(/\s+/g,'_'),
     image:{type:'jpeg',quality:0.98},
     html2canvas:{scale:2,useCORS:true,letterRendering:true,scrollY:0},
     jsPDF:{unit:'mm',format:'a4',orientation:'landscape'},
