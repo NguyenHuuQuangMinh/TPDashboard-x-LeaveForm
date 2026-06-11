@@ -9,7 +9,11 @@
 {% set remaining   = total_avail - al_used %}
 
 <div class="ilr-wrap">
-
+   <input
+        type="hidden"
+        id="current-uid"
+        value="{{ session.get('user_id', 0) }}"
+    >
   {# ── Top action bar ── #}
   <div class="ilr-topbar">
     <a href="{{ url_for('leave.manager_leave_overview') }}" class="btn-back">
@@ -284,4 +288,9 @@
   </div>
 </div>
 
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/leave_form/leave-form.js') }}"></script>
 {% endblock %}

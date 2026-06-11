@@ -1,9 +1,16 @@
-{% extends "admin/layout/base.html" %}
+{% extends "admin/layout/base.html"
+    if session.get('is_admin') == 1
+    else "user/layout/base.html"
+%}
 
 {% block title %}Users manager{% endblock %}
 
 {% block content %}
 
+{% set url_reset = url_for('user_manager.user_mng_page')
+    if session.get('is_admin') == 1
+    else url_for('permission.user_mng_page')
+%}
 
 <div class="nts-wrap">
     <div class="page-header">
@@ -69,9 +76,15 @@
 
     <button type="button" class="btn-create"
             data-crud-open
-            data-module="users"
-            data-id="create"
-            data-title="Create User">
+            data-title="Create User"
+            {% if session.get('is_admin') == 1 %}
+                data-module="users"
+                data-id="create"
+            {% else %}
+                data-url="{{ url_for('permission.user_create_form') }}"
+                data-feature="users"
+            {% endif %}
+        >
         <i class="bi bi-plus-circle"></i>
         Create User
     </button>
@@ -99,10 +112,17 @@
         {% for user in users %}
 
         <tr class="route-row"
-            data-crud-open
-            data-module="users"
-            data-id="{{ user.Id }}"
-            data-title="Edit Users - {{ user.Username }}">
+            {% if session.get('is_admin') == 1 or user.RoleId != 1 %}
+                data-crud-open
+                data-title="Edit Users - {{ user.Username }}"
+                {% if session.get('is_admin') == 1 %}
+                    data-module="users"
+                    data-id="{{ user.Id }}"
+                {% else %}
+                    data-url="{{ url_for('permission.user_edit', user_id=user.Id) }}"
+                    data-feature="users"
+                {% endif %}
+            {% endif %}>
 
             <td class="td-num">
                 {{ user.Id }}
@@ -169,3 +189,11 @@
 
 {% endblock %}
 
+{% block scripts %}
+    {% if session.get('is_admin') != 1 %}
+        <script
+            type="module"
+            src="{{ url_for('static', filename='js/admin/partials/partials.js') }}">
+        </script>
+    {% endif %}
+{% endblock %}

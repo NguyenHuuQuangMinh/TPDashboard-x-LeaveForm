@@ -1,8 +1,20 @@
 function goToLeave() {
-  var id = (document.getElementById('emp-id-input').value || '').trim();
-  if (!id) { alert('Please enter an Employee ID.'); return; }
-  window.location.href = '/leave/' + id;
+  const uid = (document.getElementById('emp-id-input').value || '').trim();
+  const security = document.getElementById("security-input").value.trim();
+  if (!uid || !security) {
+        showToast(
+            'Please enter both Employee ID and Security Code.',
+            'error'
+        );
+        return;
+  }
+  window.location.href = `/leave/${uid}/${security}`;
 }
-document.getElementById('emp-id-input').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') goToLeave();
+['emp-id-input', 'security-input'].forEach(id => {
+    document.getElementById(id).addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            goToLeave();
+        }
+    });
 });
+

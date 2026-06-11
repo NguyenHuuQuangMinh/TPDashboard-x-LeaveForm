@@ -1,7 +1,7 @@
 import { initModuleFeatures }
     from './crudModules.js';
 
-export async function openCrud(module, id, title = '') {
+export async function openCrud(module = null, id = null, title = '',url = null, feature = null) {
 
     const crudOverlay = document.getElementById('crudOverlay');
     const crudContent = document.getElementById('crudContent');
@@ -15,13 +15,15 @@ export async function openCrud(module, id, title = '') {
         crudContent.style.display = 'none';
 
         crudTitle.textContent = title || `${module}`;
-
-        const response = await fetch(`/partial/${module}/${id}`);
+        const fetchUrl = url || `/partial/${module}/${id}`;
+        const response = await fetch(fetchUrl);
         const html = await response.text();
-
         crudContent.innerHTML = html;
 
-        await initModuleFeatures(module);
+        const initName = feature || module;
+        if (initName) {
+            await initModuleFeatures(initName);
+        }
 
     } catch (err) {
 

@@ -1,6 +1,6 @@
 
 const leaveData = document.getElementById('leave-data');
-var CURRENT_UID         = document.getElementById('current-uid').value;
+var CURRENT_UID         = document.getElementById('current-uid')?.value || 0;
 var SAVE_ROW_URL        = "/leave/save-row";
 var ADD_ROW_URL         = "/leave/add";
 var DELETE_ROW_BASE_URL = "/leave/delete/";

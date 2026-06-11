@@ -44,9 +44,9 @@ def _float_row(row):
     return row
 
 
-def get_leave_summary(user_id):
-    meta = LeaveRequest.get_leave_meta(user_id)
-    entries = LeaveRequest.get_leave_entries(user_id)
+def get_leave_summary(user_id, security_code):
+    meta = LeaveRequest.get_leave_meta(user_id, security_code)
+    entries = LeaveRequest.get_leave_entries(user_id, security_code)
 
     return {
         "meta": meta,

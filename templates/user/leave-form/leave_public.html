@@ -7,16 +7,33 @@
 {# ── Top bar ── #}
 <div class="ilr-topbar no-print">
   <div class="search-inline">
-    <label><i class="bi bi-search"></i> Employee ID:</label>
-    <input type="number" id="emp-id-input"
-           placeholder="Enter ID…" min="1"
-           value="{{ uid if uid is defined else '' }}">
+    <label>
+        <i class="bi bi-search"></i>
+        Employee ID:
+    </label>
+
+    <input
+        type="number"
+        id="emp-id-input"
+        placeholder="Enter ID..."
+        min="1"
+        value="{{ uid if uid is defined else '' }}"
+    >
+
+    <label>
+        <i class="bi bi-shield-lock"></i>
+        Security Code:
+    </label>
+
+    <input
+        type="text"
+        id="security-input"
+        placeholder="Enter Security Code"
+        value="{{ security_code or '' }}"
+    >
     <button onclick="goToLeave()">
       <i class="bi bi-arrow-right-circle"></i> View
     </button>
-    {% if error is defined and error %}
-    <span class="error-msg"><i class="bi bi-exclamation-circle"></i> {{ error }}</span>
-    {% endif %}
   </div>
 
   {% if meta is defined and meta %}

@@ -1,5 +1,9 @@
 <div class="route-actions">
-<form id="userForm" method="POST" action="{{ url_for('user_manager.create_user') }}">
+{% set create_url = url_for('user_manager.create_user')
+    if session.get('is_admin') == 1
+    else url_for('permission.create_user')
+%}
+<form id="userForm" method="POST" action="{{ create_url }}">
 
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
@@ -87,21 +91,6 @@
         </div>
 
         <div class="form-group">
-            <label>Password</label>
-            <input type="password" name="PasswordHash" id="pass" required>
-        </div>
-
-    </div>
-
-    <div class="form-grid">
-
-        <div class="form-group">
-            <label>Password Check</label>
-            <input type="password" id="pass_check">
-            <small id="passError" class="password-error"></small>
-        </div>
-
-        <div class="form-group">
             <label>Status</label>
 
             <input type="text" value="Active" readonly>
@@ -110,12 +99,18 @@
         </div>
 
     </div>
+
+    <div class="form-group">
+        <label>Password</label>
+        <input type="password" name="PasswordHash" id="pass" required>
+    </div>
     </form>
     <div class="crud-actions">
 
             <button
                 class="btn-save"
                 type="submit"
+                id="saveButton"
                 form="userForm"
             >
                 Create

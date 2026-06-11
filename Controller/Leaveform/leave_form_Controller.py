@@ -8,25 +8,30 @@ from Service.leave_service import (
     get_leave_summary
 )
 from user_agents import parse as parse_ua
-leave_bp = Blueprint('leave', __name__)
+leave_bp = Blueprint('leave_public', __name__)
 
 @leave_bp.route('/')
 def leave_public():
     return render_template('user/leave-form/leave_public.html')
 
-@leave_bp.route('/leave/<int:uid>')
-def leave_public_detail(uid):
+@leave_bp.route('/leave/<int:uid>/<security_code>')
+def leave_public_detail(uid,security_code):
     session['leave_public_uid'] = uid
-    data = get_leave_summary(uid)
+
+    data = get_leave_summary(uid, security_code)
 
     meta = data["meta"]
     entries = data["entries"]
 
     if not meta:
+        flash(
+            f'⚠️ Invalid Employee ID or Security Code.',
+            'error'
+        )
         return render_template(
             "user/leave-form/leave_public.html",
-            error="Employee ID not found.",
-            uid=uid
+            uid=uid,
+            security_code=security_code
         )
 
     balance = calculate_leave_balance(meta, entries)

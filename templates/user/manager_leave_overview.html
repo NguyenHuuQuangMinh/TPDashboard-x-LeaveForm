@@ -57,6 +57,27 @@
       <path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M21 21v-2a4 4 0 0 0-3-3.85"/>
     </svg>
     <h1>Annual Leave Overview — {{ now.year if now else '2026' }}</h1>
+
+    {% if session.get('role') == 1
+      or (session.get('role') == 3 and session.get('department') == 5) %}
+    <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
+    <!-- Tải template mẫu -->
+    <a href="{{ url_for('leave.users_import_template') }}"
+       style="font-size:12px;color:#185FA5;text-decoration:none;display:flex;align-items:center;gap:4px;">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Tải file mẫu
+    </a>
+
+    <!-- Nút Import -->
+    <button onclick="document.getElementById('import-modal').style.display='flex'"
+            style="display:flex;align-items:center;gap:6px;padding:7px 14px;
+                   background:#185FA5;color:#fff;border:none;border-radius:8px;
+                   font-size:13px;cursor:pointer;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      Import Users
+    </button>
+  </div>
+     {% endif%}
   </div>
 
   {# ── Tabs ── #}
@@ -92,6 +113,7 @@
         <tr>
           <th style="width:60px">User ID</th>
           <th>Full Name</th>
+          <th style="width:100px">Security</th>
           {% if role == 1 %}<th style="width:110px">Department</th>{% endif %}
           <th style="width:110px">Reports To</th>
           <th class="center" style="width:130px">Total Annual Used</th>
@@ -108,6 +130,7 @@
             data-username="{{ (u.username or '') | lower }}">
           <td class="muted">{{ u.user_id }}</td>
           <td>{{ u.full_name or u.username or '—' }}</td>
+          <td>{{ u.security or '—' }}</td>
           {% if role == 1 %}
           <td>
             <span style="display:inline-block;padding:1px 7px;border-radius:4px;
@@ -241,4 +264,16 @@
   </div>
 </div>
 
+{% endblock %}
+
+{% block scripts %}
+<script>
+  window.APP_DATA = {
+    totalRows: {{ rows | length }},
+    rejectBase: "{{ url_for('leave.manager_reject', entry_id=0) }}".replace('/0', '/')
+  };
+</script>
+<script src="{{ url_for('static', filename='js/leave_form/leave-form.js') }}"></script>
+<script src="{{ url_for('static', filename='js/leave_form/manager-form.js') }}"></script>
+<script src="{{ url_for('static', filename='js/leave_form/import_file.js') }}"></script>
 {% endblock %}

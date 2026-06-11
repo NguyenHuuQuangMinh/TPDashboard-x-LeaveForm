@@ -228,3 +228,28 @@ class Roles:
                 "ok": False,
                 "error": str(ex)
             }
+
+    @staticmethod
+    def check_permission(role_id, endpoint):
+
+        sql = text("""
+            SELECT 1
+            FROM role_route_permissions rp
+            JOIN system_routes sr
+                ON sr.id = rp.route_id
+            WHERE rp.role_id = :role_id
+              AND sr.path = :endpoint
+              AND rp.can_view = true
+            LIMIT 1
+        """)
+
+        with engine.connect() as conn:
+            result = conn.execute(
+                sql,
+                {
+                    "role_id": role_id,
+                    "endpoint": endpoint
+                }
+            ).first()
+
+        return result is not None

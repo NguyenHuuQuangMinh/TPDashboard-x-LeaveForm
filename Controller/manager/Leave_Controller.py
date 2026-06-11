@@ -1,4 +1,4 @@
-from flask import Blueprint, session, redirect, url_for, request, render_template, flash, jsonify
+from flask import Blueprint, session, redirect, url_for, request, render_template, flash, jsonify, send_file, abort
 from Controller.decorators import admin_or_manager_required
 from Model.manager.leave_form import Leave
 from Service.leave_service import (_float_row, calc_used_leave, calc_total)
@@ -12,10 +12,14 @@ def before_all():
 
 @leave_mng_bp.route('/manager/leave-overview')
 def manager_leave_overview():
-
+    id = session.get('user_id')
     role = session.get('role')
-
-    if role == 1:
+    department_id = session.get(
+        'department'
+    )
+    print('dpm:', department_id)
+    print('role:', role)
+    if role == 1 or (role == 3 and department_id == 5):
 
         rows = [
             dict(r)
@@ -31,9 +35,7 @@ def manager_leave_overview():
 
     else:
 
-        department_id = session.get(
-            'department_id'
-        )
+
 
         rows = [
             dict(r)
@@ -45,7 +47,7 @@ def manager_leave_overview():
         pending_entries = [
             _float_row(r)
             for r in Leave.get_pending_for_department(
-                department_id
+                department_id,id
             )
         ]
 
@@ -108,10 +110,10 @@ def leave():
 @leave_mng_bp.route('/manager/leave/<int:target_user_id>', methods=['GET'])
 def manager_leave_detail(target_user_id):
     role       = session.get('role')
-    id_department = session.get('department_id')
+    id_department = session.get('department')
 
     meta, entries_raw = Leave.get_leave_summary(target_user_id)
-    if role == 3 and meta.get('department') != id_department:
+    if role == 3 and id_department !=5 and meta.get('department') != id_department:
         abort(403)
 
     entries = [_float_row(e) for e in entries_raw]
@@ -135,7 +137,7 @@ def manager_leave_detail(target_user_id):
 @leave_mng_bp.route('/manager/reject/<int:entry_id>', methods=['POST'])
 def manager_reject(entry_id):
     role = session.get('role')
-    department = session.get('department_id')
+    department = session.get('department')
 
     request_dept = Leave.get_request_department(entry_id)
 
@@ -159,7 +161,7 @@ def manager_reject(entry_id):
 @leave_mng_bp.route('/manager/approve/<int:entry_id>', methods=['POST'])
 def manager_approve(entry_id):
     role = session.get('role')
-    department = session.get('department_id')
+    department = session.get('department')
 
     # ❗ check department ownership
     request_dept = Leave.get_request_department(entry_id)
@@ -180,3 +182,63 @@ def manager_approve(entry_id):
         flash('Không tìm thấy đơn hoặc đã bị xử lý.', 'error')
 
     return redirect(url_for('leave.manager_leave_overview') + '?tab=pending')
+
+@leave_mng_bp.route("/manager/users/import/template")
+def users_import_template():
+
+    file = Leave.generate_import_template()
+
+    return send_file(
+        file,
+        mimetype=(
+            "application/"
+            "vnd.openxmlformats-officedocument"
+            ".spreadsheetml.sheet"
+        ),
+        as_attachment=True,
+        download_name="users_import_template.xlsx"
+    )
+
+@leave_mng_bp.route('/manager/users/import', methods=['POST'])
+def users_import():
+    result = Leave.import_users(
+        request.files.get("import_file")
+    )
+    if not result["ok"]:
+
+        flash(
+            f"❌ {result['error']}",
+            "error"
+        )
+
+        return redirect(
+            url_for("leave.manager_leave_overview")
+        )
+
+    message = (
+        f"✅ Import completed: "
+        f"{result['inserted']} inserted, "
+        f"{result['updated']} updated"
+    )
+
+    if result["skipped"]:
+
+        message += (
+            f", {result['skipped']} skipped"
+        )
+
+    flash(
+        message,
+        "success"
+    )
+
+    for error in result.get("errors", [])[:5]:
+
+        flash(
+            f"⚠️ {error}",
+            "error"
+        )
+
+    return redirect(
+        url_for("leave.manager_leave_overview")
+    )

@@ -1,5 +1,8 @@
 from config import engine
 from sqlalchemy import text
+from Service.import_user_from_file import import_users_from_file
+import io
+import openpyxl
 class Leave:
     @staticmethod
     def get_all_leave_summary():
@@ -11,6 +14,7 @@ class Leave:
                             u."FullName"      AS full_name,
                             u."report_to"     AS report_to,
                             d.name            AS department,
+                            u."Security"      AS security,
 
                             SUM(lr.annual_leave) AS total_annual,
                             SUM(lr.sick_leave)   AS total_sick,
@@ -35,7 +39,8 @@ class Leave:
                             u."FullName",
                             u."report_to",
                             u."PasswordHash",
-                            d.name 
+                            d.name,
+                            u."Security"
 
                         ORDER BY
                             u."FullName"
@@ -75,13 +80,16 @@ class Leave:
                             u."FullName"         AS full_name,
                             u."Job_title"        AS job_title,
                             u."working_location" AS working_location,
-                            u."DepartmentId"     AS department_id
-
-                        FROM leave_requests lr
+                            u."DepartmentId"     AS department_id,
+                            d.name            AS department,
+                            lr.type             AS leave_type
+                        FROM leave_requests lr 
 
                         JOIN "Users" u
                             ON u."Id" = lr.user_id
 
+                        Join "Departments" d
+                            ON u."DepartmentId"  = d.id
                         WHERE lr.status = 'pending'
 
                         ORDER BY lr.created_at DESC
@@ -102,7 +110,7 @@ class Leave:
                             u."FullName"      AS full_name,
                             u."report_to"     AS report_to,
                             d.name            AS department,
-
+                            u."Security"      AS security,
                             SUM(lr.annual_leave) AS total_annual,
                             SUM(lr.sick_leave)   AS total_sick,
                             SUM(lr.unpaid_leave) AS total_unpaid,
@@ -130,7 +138,8 @@ class Leave:
                             u."report_to",
                             u."PasswordHash",
                             u."DepartmentId",
-                            d.name 
+                            d.name,
+                            u."Security"
 
                         ORDER BY
                             u."FullName"
@@ -146,7 +155,7 @@ class Leave:
         return results
 
     @staticmethod
-    def get_pending_for_department(department_id):
+    def get_pending_for_department(department_id,id):
         sql = text("""
                         SELECT
                             lr.id,
@@ -174,16 +183,19 @@ class Leave:
                             u."FullName"         AS full_name,
                             u."Job_title"        AS job_title,
                             u."working_location" AS working_location,
-                            u."DepartmentId"     AS department_id
-
+                            u."DepartmentId"     AS department_id,
+                            d.name            AS department,
+                            lr.type             AS leave_type
                         FROM leave_requests lr
 
                         JOIN "Users" u
                             ON u."Id" = lr.user_id
-
+                        Join "Departments" d
+                            ON u."DepartmentId"  = d.id
                         WHERE
                             lr.status = 'pending'
                             AND u."DepartmentId" = :dept_id
+                            AND u."Id" != :id
 
                         ORDER BY lr.created_at DESC
                     """)
@@ -192,7 +204,8 @@ class Leave:
             results = conn.execute(
                 sql,
                 {
-                    "dept_id": department_id
+                    "dept_id": department_id,
+                    "id": id
                 }
             ).mappings().all()
         return results
@@ -284,3 +297,85 @@ class Leave:
                 {'id': entry_id},
             )
         return result.rowcount > 0
+
+    @staticmethod
+    def generate_import_template():
+        wb = openpyxl.Workbook()
+
+        ws = wb.active
+        ws.title = "Users"
+
+        headers = [
+            "Username",
+            "PasswordHash",
+            "FullName",
+            "Job_title",
+            "Status",
+            "RoleId",
+            "working_location",
+            "joining_date",
+            "year",
+            "department",
+            "report_to",
+            "to_email",
+            "cc_email",
+            "entitle_contract",
+            "carry_over",
+            "Security"
+        ]
+
+        ws.append(headers)
+
+        # Example data
+        ws.append([
+            "tran.my",
+            "password123",
+            "Tran My",
+            "Reporter",
+            1,
+            2,
+            "2/29 Quach Van Tuan",
+            "2024-08-26",
+            2026,
+            "Systems",
+            "BM",
+            "tran.my@company.com",
+            "hr@company.com",
+            12,
+            1,
+            ""
+        ])
+
+        buffer = io.BytesIO()
+
+        wb.save(buffer)
+
+        buffer.seek(0)
+
+        return buffer
+
+    @staticmethod
+    def import_users(file):
+        print(file)
+        if not file or file.filename == '':
+            return {
+                "ok": False,
+                "error": "Please select an Excel or CSV file."
+            }
+
+        filename = file.filename.lower()
+
+        if not (
+                filename.endswith(".xlsx")
+                or filename.endswith(".xls")
+                or filename.endswith(".csv")
+        ):
+            return {
+                "ok": False,
+                "error": "Only .xlsx, .xls or .csv files are supported."
+            }
+
+        return import_users_from_file(
+            file.stream,
+            filename
+        )

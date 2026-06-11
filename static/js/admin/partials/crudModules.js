@@ -15,6 +15,11 @@ export async function initModuleFeatures(module) {
                 await import('../user_mng/auto_field.js');
 
             m.initAutoField();
+
+            const validation =
+                await import('../user_mng/submit_check.js');
+
+            validation.initSubmitCheck();
         },
         permissions: async () => {
 

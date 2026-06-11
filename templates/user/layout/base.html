@@ -7,8 +7,9 @@
 
     <!-- CSS dùng chung -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/user/style.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/Leave_form/leave_details.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/General/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/Leave_form/leave_details.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='picture/Logo.png') }}">
@@ -59,6 +60,104 @@
             </div>
           </div>
         </div>
+
+        {# - CRUD FORM - #}
+        <div class="detail-overlay close-crud" id="crudOverlay">
+
+            <div class="detail-panel ">
+
+                <button class="panel-close" data-crud-close>
+                    <i class="bi bi-x-lg"></i>
+                </button>
+
+                <div class="panel-loading" id="crudLoading">
+                    <div class="spinner"></div>
+                </div>
+
+                <div class="panel-body" id="crudBody">
+
+                    <div class="panel-agent-name" id="crudTitle">
+                        Edit Route
+                    </div>
+
+                    <div id="crudContent"></div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {# - import form - #}
+        <div id="import-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;align-items:center;justify-content:center;">
+            <div style="background:#fff;border-radius:12px;width:440px;max-width:95vw;box-shadow:0 12px 48px rgba(0,0,0,.2);overflow:hidden;">
+
+    <!-- Modal header -->
+            <div style="padding:20px 24px 16px;border-bottom:1px solid #eee;
+                        display:flex;justify-content:space-between;align-items:center;">
+              <div>
+                <div style="font-size:15px;font-weight:600;color:#111;">Import Users</div>
+                <div style="font-size:12px;color:#888;margin-top:3px;">
+                  Hỗ trợ file .xlsx, .xls, .csv
+                </div>
+              </div>
+              <button onclick="document.getElementById('import-modal').style.display='none'"
+                      style="background:none;border:none;font-size:20px;color:#aaa;cursor:pointer;">✕</button>
+            </div>
+
+            <!-- Modal body -->
+            <form method="POST" action="{{ url_for('leave.users_import') }}"
+                  enctype="multipart/form-data" style="padding:20px 24px;">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+              <!-- Drop zone -->
+              <label for="import-file-input"
+                     id="drop-zone"
+                     style="display:block;border:2px dashed #d0d0d0;border-radius:10px;
+                            padding:28px;text-align:center;cursor:pointer;
+                            background:#fafafa;transition:border-color .15s;"
+                     ondragover="event.preventDefault();this.style.borderColor='#185FA5'"
+                     ondragleave="this.style.borderColor='#d0d0d0'"
+                     ondrop="handleDrop(event)">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none"
+                     stroke="#bbb" stroke-width="1.5" style="display:block;margin:0 auto 10px;">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <polyline points="17 8 12 3 7 8"/>
+                  <line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
+                <div style="font-size:13px;color:#555;" id="drop-label">
+                  Kéo thả file vào đây hoặc <span style="color:#185FA5;">chọn file</span>
+                </div>
+                <div style="font-size:11px;color:#aaa;margin-top:6px;">.xlsx / .xls / .csv</div>
+                <input type="file" id="import-file-input" name="import_file"
+                       accept=".xlsx,.xls,.csv" style="display:none"
+                       onchange="showFileName(this)">
+              </label>
+
+              <!-- Cột bắt buộc note -->
+              <div style="margin-top:14px;padding:10px 14px;background:#fef9ec;
+                          border-left:3px solid #f0a500;border-radius:6px;font-size:12px;color:#7a5500;">
+                <strong>Cột bắt buộc:</strong> Username, PasswordHash, FullName
+              </div>
+
+              <!-- Buttons -->
+              <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:18px;">
+                <button type="button"
+                        onclick="document.getElementById('import-modal').style.display='none'"
+                        style="padding:8px 16px;border:1px solid #ddd;border-radius:8px;
+                               background:#fff;font-size:13px;cursor:pointer;color:#555;">
+                  Hủy
+                </button>
+                <button type="submit"
+                        style="padding:8px 18px;background:#185FA5;color:#fff;
+                               border:none;border-radius:8px;font-size:13px;
+                               font-weight:600;cursor:pointer;">
+                  Import ngay
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
         {% block scripts %}{% endblock %}
 
 
@@ -66,18 +165,11 @@
     </main>
 
 </body>
-<script>
-  window.APP_DATA = {
-    totalRows: {{ rows | length }},
-    rejectBase: "{{ url_for('leave.manager_reject', entry_id=0) }}".replace('/0', '/')
-  };
-</script>
-<script src="{{ url_for('static', filename='js/leave_form/manager-form.js') }}"></script>
-<script src="{{ url_for('static', filename='js/leave_form/leave-form.js') }}"></script>
 <script src="{{ url_for('static', filename='js/Generate/dropdown.js') }}"></script>
 <script src="{{ url_for('static', filename='js/Generate/flash.js') }}"></script>
 <script src="{{ url_for('static', filename='js/Generate/slidebar.js') }}"></script>
 <script src="{{ url_for('static', filename='js/Generate/nts_details.js') }}"></script>
+<script src="{{ url_for('static', filename='js/Generate/reset_security.js') }}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </html>

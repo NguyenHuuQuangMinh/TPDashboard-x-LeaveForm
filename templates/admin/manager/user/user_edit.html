@@ -1,5 +1,13 @@
 <div class="route-actions">
-<form id="userForm" method="POST" action="{{ url_for('user_manager.update_user', user_id=user.Id) }}">
+{% set delete_url = url_for('user_manager.delete_user', user_id=user.Id)
+    if session.get('is_admin') == 1
+    else url_for('permission.delete_user', user_id=user.Id)
+%}
+{%  set update_url = url_for('user_manager.update_user', user_id=user.Id)
+    if session.get('is_admin') == 1
+    else url_for('permission.update_user', user_id=user.Id)
+%}
+<form id="userForm" method="POST" action="{{update_url}}">
 
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
@@ -99,29 +107,56 @@
         </div>
     </div>
 
-    <div class="form-group">
+    <div class="form-grid-3">
+        <div class="form-group">
 
-            <label>Status</label>
+                <label>Status</label>
 
-            <select name="Status">
+                <select name="Status">
 
-                <option value="1" {% if user.Status %} selected {% endif %}>
-                    Active
-                </option>
+                    <option value="1" {% if user.Status %} selected {% endif %}>
+                        Active
+                    </option>
 
-                <option
-                    value="0" {% if not user.Status %} selected {% endif %}>
-                    Inactive
-                </option>
+                    <option
+                        value="0" {% if not user.Status %} selected {% endif %}>
+                        Inactive
+                    </option>
 
-            </select>
+                </select>
 
+            </div>
+
+        <div class="form-group">
+        <label>Security</label>
+
+        <input
+                type="text"
+                name="Security"
+                id="securityCode"
+                value="{{ user.Security }}"
+                readonly
+            >
         </div>
+
+        <div class="form-group">
+            <label>&nbsp;</label>
+
+            <button
+                type="button"
+                class="btn-reset-security"
+                onclick="resetSecurity()"
+            >
+                Reset Security
+            </button>
+    </div>
+
+    </div>
 </form>
 <form
     id="deleteForm"
     method="POST"
-    action="{{ url_for('user_manager.delete_user', user_id=user.Id) }}"
+    action="{{ delete_url }}"
     onsubmit="return confirm('Delete this User ?')"
 >
 
@@ -136,6 +171,7 @@
 
         <button
             class="btn-save"
+            id="saveButton"
             type="submit"
             form="userForm"
         >

@@ -17,7 +17,9 @@ export function initCrud() {
             openCrud(
                 trigger.dataset.module,
                 trigger.dataset.id,
-                trigger.dataset.title
+                trigger.dataset.title,
+                trigger.dataset.url,
+                trigger.dataset.feature
             );
         }
     );

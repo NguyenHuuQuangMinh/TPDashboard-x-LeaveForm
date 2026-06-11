@@ -26,12 +26,12 @@
 
 .user-table th:nth-child(4),
 .user-table td:nth-child(4) {
-    width: 15%;
+    width: 10%;
 }
 
 .user-table th:nth-child(5),
 .user-table td:nth-child(5) {
-    width: 15%;
+    width: 10%;
 }
 
 .user-table th:nth-child(6),
@@ -50,6 +50,13 @@
     vertical-align: middle !important;
 }
 
+.user-table th,
+.user-table td {
+    text-overflow: unset !important;
+    white-space: normal !important;
+    overflow: visible !important;
+}
+
 .password-error {
     display: block;
     margin-top: 6px;
@@ -59,4 +66,38 @@
 
 .password-error.success {
     color: #28a745;
+}
+
+.btn-reset-security {
+    background: white;
+    color: var(--ink-mid);
+    border-color: var(--border);
+    width: 100%;
+    height: 42px;
+    padding: 0 18px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    text-decoration: none;
+    transition: all .2s ease;
+    margin-bottom: 0;
+}
+
+.btn-reset-security:hover {
+    background: #f8f4ee;
+
+    color: var(--ink);
+
+    border-color: rgba(176,141,74,.28);
+}
+
+.btn-save:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }

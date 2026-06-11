@@ -13,35 +13,36 @@ def _float_row(row):
 
 class LeaveRequest:
     @staticmethod
-    def get_leave_entries(user_id):
+    def get_leave_entries(user_id, security_code):
         sql = text("""
             SELECT
-                id,
-                date_from,
-                date_to,
-                annual_leave,
-                sick_leave,
-                maternity_leave,
-                pregnancy_leave,
-                personal_leave,
-                compensate_leave,
-                unpaid_leave,
-                notes,
-                status,
-                created_at,
-                carry_over,
-                entitle_contract,
-                type
-            FROM leave_requests
-            WHERE user_id = :uid
-              AND EXTRACT(YEAR FROM date_from) = EXTRACT(YEAR FROM CURRENT_DATE)
-            ORDER BY date_from ASC
+                lr.id,
+                lr.date_from,
+                lr.date_to,
+                lr.annual_leave,
+                lr.sick_leave,
+                lr.maternity_leave,
+                lr.pregnancy_leave,
+                lr.personal_leave,
+                lr.compensate_leave,
+                lr.unpaid_leave,
+                lr.notes,
+                lr.status,
+                lr.created_at,
+                lr.carry_over,
+                lr.entitle_contract,
+                lr.type
+            FROM leave_requests lr INNER JOIN "Users" u ON u."Id" = lr.user_id
+            WHERE lr.user_id = :uid AND u."Security" = :security_code
+              AND EXTRACT(YEAR FROM lr.date_from) = EXTRACT(YEAR FROM CURRENT_DATE)
+            ORDER BY lr.date_from ASC
         """)
 
         with engine.connect() as conn:
             rows = conn.execute(
                 sql,
-                {"uid": user_id}
+                {"uid": user_id,
+                 "security_code": security_code}
             ).mappings().all()
 
         return [_float_row(row) for row in rows]
@@ -76,7 +77,7 @@ class LeaveRequest:
             return conn.execute(sql).mappings().all()
 
     @staticmethod
-    def get_leave_meta(user_id):
+    def get_leave_meta(user_id, security_code):
         sql = text("""
             SELECT
                 u."Username"         AS username,
@@ -91,7 +92,7 @@ class LeaveRequest:
             FROM "Users" u
             LEFT JOIN leave_requests lr
                 ON u."Id" = lr.user_id
-            WHERE u."Id" = :uid
+            WHERE u."Id" = :uid AND u."Security" = :security_code
               AND EXTRACT(YEAR FROM lr.date_from) = EXTRACT(YEAR FROM CURRENT_DATE)
             ORDER BY lr.created_at ASC
             LIMIT 1
@@ -100,7 +101,8 @@ class LeaveRequest:
         with engine.connect() as conn:
             row = conn.execute(
                 sql,
-                {"uid": user_id}
+                {"uid": user_id,
+                 "security_code": security_code}
             ).mappings().first()
 
         if not row:

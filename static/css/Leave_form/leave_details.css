@@ -793,3 +793,10 @@
   .inp-notes {
   transition: height 0.08s ease;
 }
+
+.title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}

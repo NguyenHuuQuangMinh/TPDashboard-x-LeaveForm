@@ -1,17 +1,18 @@
-from flask import Blueprint, session, redirect, url_for, request, render_template, flash, jsonify, abort
-from Controller.decorators import admin_required
+from flask import Blueprint, session, redirect, url_for, request, render_template, flash, jsonify
+from Controller.decorators import role_required
 from Model.admin.user_mng import User_mng
 from Model.Utils.password_helper import hash_password
 from Service.security_code import generate_security
 
-user_mng_bp = Blueprint('user_manager', __name__)
+pms_mng_bp = Blueprint('permission', __name__)
 
-@user_mng_bp.before_request
-@admin_required
+@pms_mng_bp.before_request
+@role_required
 def before_all():
     pass
 
-@user_mng_bp.route('/admin/users')
+
+@pms_mng_bp.route('/users')
 def user_mng_page():
     name = request.args.get('name', '').strip()
     role = request.args.get('role', '').strip()
@@ -22,7 +23,7 @@ def user_mng_page():
     users,total = User_mng.get_all_users(name,role,dpm,status,page,per_page)
     total_pages = (total + per_page - 1) // per_page
     all_dpm = User_mng.get_all_dpm()
-    all_role = User_mng.get_all_role()
+    all_role = User_mng.get_all_role_no_admin()
     return render_template(
         'admin/manager/user/users.html',
         users=users,
@@ -37,11 +38,11 @@ def user_mng_page():
         total_pages=total_pages
     )
 
-@user_mng_bp.route('/partial/users/<int:user_id>')
-def user_edit(user_id):
 
+@pms_mng_bp.route('/permission/partial/users/<int:user_id>')
+def user_edit(user_id):
     user = User_mng.get_by_id(user_id)
-    roles = User_mng.get_all_role()
+    roles = User_mng.get_all_role_no_admin()
     dpms = User_mng.get_all_dpm()
     return render_template(
         'admin/manager/user/user_edit.html',
@@ -50,9 +51,9 @@ def user_edit(user_id):
         dpms=dpms
     )
 
-@user_mng_bp.route('/partial/users/<int:user_id>/update', methods=['POST'])
-def update_user(user_id):
 
+@pms_mng_bp.route('/permission/partial/users/<int:user_id>/update', methods=['POST'])
+def update_user(user_id):
     user = User_mng.get_by_id(user_id)
 
     if not user:
@@ -109,10 +110,10 @@ def update_user(user_id):
         )
 
     return redirect(
-        url_for('user_manager.user_mng_page')
+        url_for('permission.user_mng_page')
     )
 
-@user_mng_bp.route('/users/<int:user_id>/delete',methods=['POST'])
+@pms_mng_bp.route('/permission/users/<int:user_id>/delete',methods=['POST'])
 def delete_user(user_id):
 
     delete = User_mng.delete(user_id)
@@ -131,18 +132,18 @@ def delete_user(user_id):
         )
 
     return redirect(
-        url_for('user_manager.user_mng_page')
+        url_for('permission.user_mng_page')
     )
 
-@user_mng_bp.route('/partial/users/create')
+@pms_mng_bp.route('/permission/partial/users/create')
 def user_create_form():
-    roles = User_mng.get_all_role()
+    roles = User_mng.get_all_role_no_admin()
     dpms = User_mng.get_all_dpm()
     return render_template('admin/manager/user/create_form.html',
                            roles=roles,
                            dpms=dpms)
 
-@user_mng_bp.route('/users/create', methods=['POST'])
+@pms_mng_bp.route('/permission/users/create', methods=['POST'])
 def create_user():
     data = {
         "Username":
@@ -196,7 +197,4 @@ def create_user():
             'error'
         )
 
-    return redirect(url_for('user_manager.user_mng_page'))
-
-
-
+    return redirect(url_for('permission.user_mng_page'))

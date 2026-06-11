@@ -49,7 +49,8 @@ class User_mng:
                         u."Job_title",
                         u."Status",
                         r."Rolename",
-                        d.name as "dpm_name"
+                        d.name as "dpm_name",
+                        u."RoleId"
                     FROM "Users" u INNER JOIN "Roles" r ON r."RoleId" = u."RoleId"
                                    INNER JOIN "Departments" d ON d.id = u."DepartmentId"
                     {where_sql}
@@ -79,7 +80,8 @@ class User_mng:
                 "Status",
                 "working_location",
                 "RoleId",
-                "DepartmentId"
+                "DepartmentId",
+                "Security"
             FROM "Users"
             WHERE "Id" = :id
         """)
@@ -107,6 +109,19 @@ class User_mng:
                             "Rolename"
                         FROM "Roles"
                     """)
+        with engine.connect() as conn:
+            results = conn.execute(sql).mappings().all()
+        return results
+
+    @staticmethod
+    def get_all_role_no_admin():
+        sql = text("""
+                            SELECT DISTINCT
+                                "RoleId",
+                                "Rolename"
+                            FROM "Roles"
+                            WHERE "RoleId" != 1
+                        """)
         with engine.connect() as conn:
             results = conn.execute(sql).mappings().all()
         return results
@@ -147,9 +162,9 @@ class User_mng:
     def insertUser(data):
         sql = text("""
                 INSERT INTO "Users"
-                ("Username", "FullName", "working_location", "RoleId", "DepartmentId", "Job_title", "report_to","to_email", "cc_email","PasswordHash","Status")
+                ("Username", "FullName", "working_location", "RoleId", "DepartmentId", "Job_title", "report_to","to_email", "cc_email","PasswordHash","Status","Security")
                 VALUES
-                (:Username, :FullName, :working_location, :RoleId, :DepartmentId, :Job_title, :report_to, :to_email, :cc_email, :PasswordHash, :Status)
+                (:Username, :FullName, :working_location, :RoleId, :DepartmentId, :Job_title, :report_to, :to_email, :cc_email, :PasswordHash, :Status, :Security)
             """)
         with engine.begin() as conn:
             result = conn.execute(
