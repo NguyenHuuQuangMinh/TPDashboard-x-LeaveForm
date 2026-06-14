@@ -7,6 +7,7 @@ from config import engine
 from Service.security_code import generate_security
 
 REQUIRED_COLUMNS = {
+    "Id",
     "Username",
     "PasswordHash",
     "FullName"
@@ -45,8 +46,6 @@ def import_users_from_file(file_stream, filename):
             result["skipped"] += 1
             result["errors"].append(f"Row {row_num}: {e}")
 
-    _reset_user_sequence()
-
     return {"ok": True, **result}
 
 def _read_import_file(file_stream, filename):
@@ -72,7 +71,7 @@ def _build_user_payload(row):
     if not username or not fullname:
         raise ValueError("Username or FullName is empty")
 
-    row_id = _int(row, "Id")
+    row_id = _val(row, "Id")
 
     return {
         "username": username,
@@ -277,27 +276,6 @@ def _date(row, key):
     except:
         return None
 
-def _reset_user_sequence():
-
-    with engine.begin() as conn:
-
-        conn.execute(
-            text("""
-                SELECT setval(
-                    pg_get_serial_sequence(
-                        '"Users"',
-                        'Id'
-                    ),
-                    COALESCE(
-                        (
-                            SELECT MAX("Id")
-                            FROM "Users"
-                        ),
-                        1
-                    )
-                )
-            """)
-        )
 
 def _sync_leave_balance(conn, user_id, payload):
 

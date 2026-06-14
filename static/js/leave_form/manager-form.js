@@ -12,13 +12,14 @@ function switchTab(tab) {
 
 /* ── Search ── */
 function doFilter() {
+  if (totalRows === 0) return;
   var q  = document.getElementById('usearch').value.trim();
   document.getElementById('clrbtn').style.display = q ? 'inline' : 'none';
   var ql = q.toLowerCase();
   var rows = document.querySelectorAll('#tbody tr');
   var visible = 0;
   rows.forEach(function(row) {
-    var uid      = row.getAttribute('data-uid') || '';
+    var uid = (row.getAttribute('data-uid') || '').toLowerCase();
     var name     = row.getAttribute('data-name') || '';
     var username = row.getAttribute('data-username') || '';
     var match = !q || uid === q || username.indexOf(ql) !== -1 || name.indexOf(ql) !== -1;

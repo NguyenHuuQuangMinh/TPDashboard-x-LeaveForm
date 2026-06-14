@@ -107,7 +107,7 @@ def leave():
         job=session.get("job"),
     )
 
-@leave_mng_bp.route('/manager/leave/<int:target_user_id>', methods=['GET'])
+@leave_mng_bp.route('/manager/leave/<string:target_user_id>', methods=['GET'])
 def manager_leave_detail(target_user_id):
     role       = session.get('role')
     id_department = session.get('department')

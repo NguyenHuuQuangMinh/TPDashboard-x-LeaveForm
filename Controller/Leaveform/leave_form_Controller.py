@@ -14,7 +14,7 @@ leave_bp = Blueprint('leave_public', __name__)
 def leave_public():
     return render_template('user/leave-form/leave_public.html')
 
-@leave_bp.route('/leave/<int:uid>/<security_code>')
+@leave_bp.route('/leave/<string:uid>/<security_code>')
 def leave_public_detail(uid,security_code):
     session['leave_public_uid'] = uid
 
@@ -59,9 +59,9 @@ def leave_public_detail(uid,security_code):
 def leave_save_row():
 
     try:
-        user_id = int(
-            session.get('leave_public_uid')
-            or request.form.get('target_uid')
+        user_id = (
+                session.get('leave_public_uid')
+                or request.form.get('target_uid')
         )
         entry_id = int(
             request.form.get('entry_id')
@@ -152,7 +152,7 @@ def leave_save_row():
 def leave_add():
 
     try:
-        user_id = int(
+        user_id = (
             session.get('leave_public_uid')
             or request.form.get('target_uid')
         )
@@ -237,7 +237,10 @@ def leave_add():
 def leave_delete(entry_id):
     """[USER] Xóa dòng pending của chính mình."""
 
-    user_id = int(session.get('leave_public_uid') or request.form.get('target_uid'))
+    user_id = (
+            session.get('leave_public_uid')
+            or request.form.get('target_uid')
+    )
 
     try:
 

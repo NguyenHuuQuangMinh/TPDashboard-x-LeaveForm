@@ -37,7 +37,7 @@ def user_mng_page():
         total_pages=total_pages
     )
 
-@user_mng_bp.route('/partial/users/<int:user_id>')
+@user_mng_bp.route('/partial/users/<string:user_id>')
 def user_edit(user_id):
 
     user = User_mng.get_by_id(user_id)
@@ -50,7 +50,7 @@ def user_edit(user_id):
         dpms=dpms
     )
 
-@user_mng_bp.route('/partial/users/<int:user_id>/update', methods=['POST'])
+@user_mng_bp.route('/partial/users/<string:user_id>/update', methods=['POST'])
 def update_user(user_id):
 
     user = User_mng.get_by_id(user_id)
@@ -112,7 +112,7 @@ def update_user(user_id):
         url_for('user_manager.user_mng_page')
     )
 
-@user_mng_bp.route('/users/<int:user_id>/delete',methods=['POST'])
+@user_mng_bp.route('/users/<string:user_id>/delete',methods=['POST'])
 def delete_user(user_id):
 
     delete = User_mng.delete(user_id)
@@ -145,6 +145,8 @@ def user_create_form():
 @user_mng_bp.route('/users/create', methods=['POST'])
 def create_user():
     data = {
+        "id":
+            request.form.get("Id"),
         "Username":
             request.form.get("Username"),
 

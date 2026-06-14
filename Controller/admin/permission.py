@@ -39,7 +39,7 @@ def user_mng_page():
     )
 
 
-@pms_mng_bp.route('/permission/partial/users/<int:user_id>')
+@pms_mng_bp.route('/permission/partial/users/<string:user_id>')
 def user_edit(user_id):
     user = User_mng.get_by_id(user_id)
     roles = User_mng.get_all_role_no_admin()
@@ -52,7 +52,7 @@ def user_edit(user_id):
     )
 
 
-@pms_mng_bp.route('/permission/partial/users/<int:user_id>/update', methods=['POST'])
+@pms_mng_bp.route('/permission/partial/users/<string:user_id>/update', methods=['POST'])
 def update_user(user_id):
     user = User_mng.get_by_id(user_id)
 
@@ -113,7 +113,7 @@ def update_user(user_id):
         url_for('permission.user_mng_page')
     )
 
-@pms_mng_bp.route('/permission/users/<int:user_id>/delete',methods=['POST'])
+@pms_mng_bp.route('/permission/users/<string:user_id>/delete',methods=['POST'])
 def delete_user(user_id):
 
     delete = User_mng.delete(user_id)
@@ -146,6 +146,8 @@ def user_create_form():
 @pms_mng_bp.route('/permission/users/create', methods=['POST'])
 def create_user():
     data = {
+        "id":
+            request.form.get("Id"),
         "Username":
             request.form.get("Username"),
 

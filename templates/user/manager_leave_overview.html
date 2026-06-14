@@ -124,6 +124,7 @@
         </tr>
       </thead>
       <tbody id="tbody">
+        {% if rows %}
         {% for u in rows %}
         <tr data-uid="{{ u.user_id }}"
             data-name="{{ (u.full_name or '') | lower }}"
@@ -153,6 +154,14 @@
           </td>
         </tr>
         {% endfor %}
+        {% else %}
+        <tr>
+          <td colspan="{{ 10 if role == 1 else 9 }}"
+              style="text-align:center;padding:30px;color:#999;">
+            📄 Hiện tại chưa có dữ liệu nhân viên
+          </td>
+        </tr>
+      {% endif %}
       </tbody>
     </table>
     <div class="no-results" id="nores">
@@ -268,10 +277,10 @@
 
 {% block scripts %}
 <script>
-  window.APP_DATA = {
-    totalRows: {{ rows | length }},
-    rejectBase: "{{ url_for('leave.manager_reject', entry_id=0) }}".replace('/0', '/')
-  };
+    window.APP_DATA = {
+      totalRows: {{ (rows or []) | length }},
+      rejectBase: "{{ url_for('leave.manager_reject', entry_id=0) }}".replace('/0','/')
+    };
 </script>
 <script src="{{ url_for('static', filename='js/leave_form/leave-form.js') }}"></script>
 <script src="{{ url_for('static', filename='js/leave_form/manager-form.js') }}"></script>

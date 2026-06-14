@@ -48,7 +48,7 @@ def login():
             )
             return redirect(url_for('auth.login'))
 
-        if not verify_password(password, user.password_hash):
+        if not user or not verify_password(password, user.password_hash):
             flash(
                 "❌ Invalid username or password.",
                 "error"

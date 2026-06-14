@@ -1,26 +1,26 @@
 
 const leaveData = document.getElementById('leave-data');
-var CURRENT_UID         = document.getElementById('current-uid')?.value || 0;
+var CURRENT_UID         = document.getElementById('current-uid')?.value || "";
 var SAVE_ROW_URL        = "/leave/save-row";
 var ADD_ROW_URL         = "/leave/add";
 var DELETE_ROW_BASE_URL = "/leave/delete/";
 const CARRY_OVER =
-    parseFloat(leaveData.dataset.carryOver) || 0;
+    parseFloat(leaveData?.dataset.carryOver || 0);
 
 const ENTITLE_CONTRACT =
-    parseFloat(leaveData.dataset.entitleContract) || 0;
+    parseFloat(leaveData?.dataset.entitleContract || 0);
 
 const TOTAL_AVAIL =
-    parseFloat(leaveData.dataset.totalAvail || 0);
+    parseFloat(leaveData?.dataset.totalAvail || 0);
 var selectedRow         = null;
-const metaEl = document.getElementById('employee-meta');
+const meta = document.getElementById('employee-meta')?.dataset || {};
 
-const FULL_NAME = metaEl.dataset.fullName;
-const JOB_TITLE = metaEl.dataset.jobTitle;
-const DEPARTMENT = metaEl.dataset.department;
-const WORKING_LOCATION = metaEl.dataset.workingLocation;
-const REPORT_TO = metaEl.dataset.reportTo;
-const JOINING_DATE = metaEl.dataset.joiningDate;
+const FULL_NAME = meta.fullName || "";
+const JOB_TITLE = meta.jobTitle || "";
+const DEPARTMENT = meta.department || "";
+const WORKING_LOCATION = meta.workingLocation || "";
+const REPORT_TO = meta.reportTo || "";
+const JOINING_DATE = meta.joiningDate || "";
 
 /* ── Helper: get leave type value from a row ── */
 function getLeaveType(row) {

@@ -306,6 +306,7 @@ class Leave:
         ws.title = "Users"
 
         headers = [
+            "Id",
             "Username",
             "PasswordHash",
             "FullName",
@@ -328,6 +329,7 @@ class Leave:
 
         # Example data
         ws.append([
+            "SG000",
             "tran.my",
             "password123",
             "Tran My",

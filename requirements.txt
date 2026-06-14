@@ -5,3 +5,4 @@ flask_wtf
 waitress
 psycopg2-binary
 user-agents
+openpyxl

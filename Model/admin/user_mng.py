@@ -162,9 +162,9 @@ class User_mng:
     def insertUser(data):
         sql = text("""
                 INSERT INTO "Users"
-                ("Username", "FullName", "working_location", "RoleId", "DepartmentId", "Job_title", "report_to","to_email", "cc_email","PasswordHash","Status","Security")
+                ("Id","Username", "FullName", "working_location", "RoleId", "DepartmentId", "Job_title", "report_to","to_email", "cc_email","PasswordHash","Status","Security")
                 VALUES
-                (:Username, :FullName, :working_location, :RoleId, :DepartmentId, :Job_title, :report_to, :to_email, :cc_email, :PasswordHash, :Status, :Security)
+                (:id,:Username, :FullName, :working_location, :RoleId, :DepartmentId, :Job_title, :report_to, :to_email, :cc_email, :PasswordHash, :Status, :Security)
             """)
         with engine.begin() as conn:
             result = conn.execute(

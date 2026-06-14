@@ -92,8 +92,8 @@ class LeaveRequest:
             FROM "Users" u
             LEFT JOIN leave_requests lr
                 ON u."Id" = lr.user_id
+                AND EXTRACT(YEAR FROM lr.date_from) = EXTRACT(YEAR FROM CURRENT_DATE)
             WHERE u."Id" = :uid AND u."Security" = :security_code
-              AND EXTRACT(YEAR FROM lr.date_from) = EXTRACT(YEAR FROM CURRENT_DATE)
             ORDER BY lr.created_at ASC
             LIMIT 1
         """)

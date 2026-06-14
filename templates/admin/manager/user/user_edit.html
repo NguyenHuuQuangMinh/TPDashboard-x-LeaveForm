@@ -11,10 +11,16 @@
 
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
-    <input type="hidden" value="{{ user.Id }}">
+    <div class="form-grid-3">
 
-    <div class="form-grid">
-
+        <div class="form-group">
+            <label>ID</label>
+            <input
+                type="text"
+                value="{{ user.Id }}"
+                readonly
+            >
+        </div>
         <div class="form-group">
 
             <label>Name</label>

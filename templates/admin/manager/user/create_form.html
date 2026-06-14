@@ -8,6 +8,15 @@
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
     <div class="form-grid">
+
+        <div class="form-group">
+
+            <label>ID User</label>
+
+            <input type="text" name="Id" required>
+
+        </div>
+
         <div class="form-group">
 
             <label>UserName</label>
@@ -15,6 +24,10 @@
             <input type="text" name="Username" required>
 
         </div>
+
+    </div>
+
+    <div class="form-grid">
 
         <div class="form-group">
 
@@ -24,10 +37,6 @@
 
         </div>
 
-    </div>
-
-    <div class="form-grid">
-
         <div class="form-group">
 
             <label>Working Location</label>
@@ -36,20 +45,20 @@
 
         </div>
 
-        <div class="form-group">
-        <label>Role</label>
-        <select name="RoleId" id="roleSelect" required>
-            {% for role in roles %}
-                <option value="{{ role.RoleId }}">
-                    {{ role.Rolename }}
-                </option>
-            {% endfor %}
-        </select>
-    </div>
-
     </div>
 
     <div class="form-grid">
+        <div class="form-group">
+            <label>Role</label>
+            <select name="RoleId" id="roleSelect" required>
+                {% for role in roles %}
+                    <option value="{{ role.RoleId }}">
+                        {{ role.Rolename }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
         <div class="form-group">
             <label>Department</label>
 
@@ -63,46 +72,48 @@
             </select>
         </div>
 
+    </div>
+
+    <div class="form-grid">
+
         <div class="form-group">
             <label>Job</label>
             <input type="text" name="Job_title" id="jobTitle" required>
         </div>
-
-    </div>
-
-    <div class="form-grid">
 
         <div class="form-group">
             <label>Report To</label>
             <input type="text" name="report_to" id="reportTo" required>
         </div>
 
+    </div>
+    <div class="form-grid">
+
          <div class="form-group">
             <label>To Email</label>
             <input type="text" name="to_email">
         </div>
-
-    </div>
-    <div class="form-grid">
 
         <div class="form-group">
             <label>CC Email</label>
             <input type="text" name="cc_email">
         </div>
 
-        <div class="form-group">
-            <label>Status</label>
-
-            <input type="text" value="Active" readonly>
-
-            <input type="hidden" name="Status" value="1">
-        </div>
-
     </div>
 
-    <div class="form-group">
-        <label>Password</label>
-        <input type="password" name="PasswordHash" id="pass" required>
+    <div class="form-grid">
+        <div class="form-group">
+                <label>Status</label>
+
+                <input type="text" value="Active" readonly>
+
+                <input type="hidden" name="Status" value="1">
+            </div>
+
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" name="PasswordHash" id="pass" required>
+        </div>
     </div>
     </form>
     <div class="crud-actions">
